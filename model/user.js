@@ -41,6 +41,18 @@ userSchema.methods.comparePasswordHash = function(password){
   });
 };
 
+
+// for signup & signin: first create a secure hash (using generateFindHash/crypto) then use it to create temporary token using app secret
+userSchema.methods.generateToken = function(){
+  debug('generateToken');
+  return new Promise((resolve, reject) => {
+    this.generateFindHash()
+    .then(findHash => resolve(jwt.sign({token: findHash}, process.env.APP_SECRET)))
+    .catch(err => reject(err)); // 500 error from find hash
+  });
+};
+
+//
 userSchema.methods.generateFindHash = function(){
   debug('generateFindHash');
   return new Promise((resolve, reject) => {
@@ -56,16 +68,6 @@ userSchema.methods.generateFindHash = function(){
         _generateFindHash.call(this);
       });
     }
-  });
-};
-
-// for signup & signin
-userSchema.methods.generateToken = function(){
-  debug('generateToken');
-  return new Promise((resolve, reject) => {
-    this.generateFindHash()
-    .then(findHash => resolve(jwt.sign({token: findHash}, process.env.APP_SECRET)))
-    .catch(err => reject(err)); // 500 error from find hash
   });
 };
 
