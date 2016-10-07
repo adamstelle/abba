@@ -8,14 +8,14 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const debug = require('debug')('abba:user');
 
-const userSchema = mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const userSchema = Schema({
   email: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   findHash: {type: String, unique: true},
   // profile: TBD
 });
-
-module.exports = mongoose.model('user', userSchema);
 
 userSchema.methods.generatePasswordHash = function(password){
   debug('generatePasswordHash');

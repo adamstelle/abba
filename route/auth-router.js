@@ -7,7 +7,7 @@ const basicAuth = require('../lib/basic-auth-middleware.js');
 
 const User = require('../model/user.js');
 
-const Authrouter = module.exports = Router();
+const authRouter = module.exports = Router();
 
 authRouter.post('/api/signup', jsonParser, function(req, res, next){
   debug('POST /api/signup');
