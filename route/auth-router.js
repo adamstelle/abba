@@ -1,7 +1,9 @@
 'use strict';
 
 const Router = require('express').Router;
+const createError = require('http-errors');
 const jsonParser = require('body-parser').json();
+
 const debug = require('debug')('abba:auth-router');
 const basicAuth = require('../lib/basic-auth-middleware.js');
 
@@ -26,8 +28,11 @@ authRouter.post('/api/signup', jsonParser, function(req, res, next){
 
 authRouter.get('/api/login', basicAuth, function(req, res, next){
   debug('GET /api/login');
+  console.log(req.auth.email);
   User.findOne({email: req.auth.email})
+  .catch(err => Promise.reject(createError(401, err.message)))
   .then(user => user.comparePasswordHash(req.auth.password))
+  .catch(err => Promise.reject(createError(401, err.message)))
   .then(user => user.generateToken())
   .then(token => res.send(token))
   .catch(next);
