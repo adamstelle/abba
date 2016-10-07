@@ -1,3 +1,4 @@
+'use strict';
 // npm modules
 const debug = require('debug')('abba:photo-mock');
 
@@ -19,7 +20,6 @@ module.exports = function(done){
   userMock.call(this, err => {
     if (err) return done(err);
     examplePhotoData.userID = this._id.toString();
-    examplePhotoData.galleryID = this._id.toString();
     new Photo(examplePhotoData).save()
     .then(photo => {
       this.tempPhoto = photo;

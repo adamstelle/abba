@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "DEBUG='abba*' ./node_modules/mocha/bin/mocha",
-    "start": "DEBUG='abba*' ./node_modules/nodemon/bin/nodemon.js server.js"
+    "start": "DEBUG='abba*' ./node_modules/nodemon/bin/nodemon.js server.js",
+    "lint": "./node_modules/eslint/bin/eslint.js"
   },
   "repository": {
     "type": "git",
@@ -41,6 +42,7 @@
   },
   "dependencies": {
     "crypto": "0.0.3",
+    "eslint": "3.7.1",
     "jsonwebtoken": "7.1.9"
   }
 }

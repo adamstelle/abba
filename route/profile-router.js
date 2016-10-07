@@ -13,9 +13,9 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 // constants
 const profileRouter = module.exports = Router();
 
-profileRouter.post('/api/profile', bearerAuth, jsonParser, function(req, res, next) {
+profileRouter.post('/api/profile', jsonParser, bearerAuth,  function(req, res, next) {
   debug('POST /api/profile');
-  
+
   req.body.userID = req.user._id;
   new Profile(req.body).save()
   .then( profile => res.json(profile))

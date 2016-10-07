@@ -24,12 +24,12 @@ mongoose.connect(process.env.MONGODB_URI);
 const PORT = process.env.PORT;
 const app = express();
 
-// app middleware
-app.use(cors());
-
 // app routes
 app.use(authRouter);
 app.use(profileRouter);
+
+// app middleware
+app.use(cors());
 app.use(errorMiddleware);
 
 // start server
