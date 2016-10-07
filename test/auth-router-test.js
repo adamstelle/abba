@@ -13,7 +13,7 @@ mongoose.Promise = Promise;
 const url = `http://localhost:${process.env.PORT}`;
 const exampleUser = {
   email: 'test@test.com',
-  password: 'baddpass',
+  password: 'badpass',
 };
 
 describe('testing auth routes', function() {
@@ -31,6 +31,33 @@ describe('testing auth routes', function() {
         .send(exampleUser)
         .end((err, res) => {
           if (err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(!!res.text).to.equal(true);
+          done();
+        });
+      });
+    });
+  });
+  describe('testing GET /api/login', function() {
+    describe('with valid ID and auth', function() {
+      before(done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then(user => user.save())
+        .then(user => console.log(user))
+        .then(() => done());
+      });
+      after(done => {
+        User.remove()
+        .then(() => done())
+        .catch(done);
+      });
+      it('should return a token', (done) => {
+        request.get(`${url}/api/login`)
+        .auth('test@test.com', 'badpass')
+        .end((err, res) => {
+          if (err) return done(err);
+          console.log('res.text is ', res.text);
           expect(res.status).to.equal(200);
           expect(!!res.text).to.equal(true);
           done();
