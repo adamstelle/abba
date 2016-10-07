@@ -38,7 +38,7 @@ describe('testing auth routes', function() {
         });
       });
     }); //end of valid body
-    describe('with invalid or no body', function() {
+    describe('with invalid body', function() {
       it('should return a 400 bad request', (done) => {
         request.post(`${url}/api/signup`)
         .send('nope')
@@ -49,6 +49,17 @@ describe('testing auth routes', function() {
         });
       });
     }); //end of invalid body
+    describe('with no body', function() {
+      it('should return a 400 bad request', (done) => {
+        request.post(`${url}/api/signup`)
+        .send()
+        .set('Character-Type', 'application/json')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    }); //end of no body
   }); //end of POST tests
 
   describe('testing GET /api/login', function() {
