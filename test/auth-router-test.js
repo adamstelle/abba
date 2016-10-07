@@ -9,6 +9,7 @@ const User = require('../model/user.js');
 const serverControl = require('./lib/server-control.js');
 
 const userMock = require('./lib/user-mock.js');
+const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
 mongoose.Promise = Promise;
 
@@ -20,9 +21,8 @@ describe('testing auth routes', function() {
   describe('testing POST /api/signup', function() {
     describe('with valid body', function() {
       after(done => {
-        User.remove()
-        .then(() => done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('should return a token', (done) => {
         request.post(`${url}/api/signup`)
@@ -67,9 +67,8 @@ describe('testing auth routes', function() {
     describe('with valid ID and auth', function() {
       before(done => userMock.call(this, done));
       after(done => {
-        User.remove()
-        .then(() => done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('should return a token', (done) => {
         console.log('this tempuser is ', this.tempUser);
@@ -87,9 +86,8 @@ describe('testing auth routes', function() {
     describe('with an invalid password and valid email', function() {
       before(done => userMock.call(this, done));
       after(done => {
-        User.remove()
-        .then(() => done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('should return a 401 not authorized', (done) => {
         request.get(`${url}/api/login`)
@@ -103,9 +101,8 @@ describe('testing auth routes', function() {
     describe('with a valid password and invalid email', function() {
       before(done => userMock.call(this,done));
       after(done => {
-        User.remove()
-        .then(()=> done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
     });
     it('should return a 401 bad request', (done) => {
