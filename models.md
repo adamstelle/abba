@@ -1,5 +1,4 @@
 Abba:
-
 - Models:
   - User
   - Photo
@@ -8,7 +7,6 @@ Abba:
   - Residence
   - Bedroom
   - Estimate
-
 
 User
 -  email
