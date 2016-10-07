@@ -1,0 +1,46 @@
+{
+  "name": "abba",
+  "version": "1.0.0",
+  "description": "An app to predict short-term rental income for homeowners and renters.",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "DEBUG='abba*' ./node_modules/mocha/bin/mocha",
+    "start": "DEBUG='abba*' ./node_modules/nodemon/bin/nodemon.js server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamstelle/abba.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adamstelle/abba/issues"
+  },
+  "homepage": "https://github.com/adamstelle/abba#readme",
+  "devDependencies": {
+    "aws-mocks": "0.0.10",
+    "aws-sdk-mock": "1.5.0",
+    "bcrypt": "0.8.7",
+    "bluebird": "3.4.6",
+    "body-parser": "1.15.2",
+    "chai": "3.5.0",
+    "cors": "2.8.1",
+    "debug": "2.2.0",
+    "dotenv": "2.0.0",
+    "express": "4.14.0",
+    "http-errors": "1.5.0",
+    "lorem-ipsum": "1.0.3",
+    "mocha": "3.1.0",
+    "mongoose": "4.6.3",
+    "nodemon": "1.11.0",
+    "superagent": "2.3.0"
+  },
+  "dependencies": {
+    "crypto": "0.0.3",
+    "jsonwebtoken": "7.1.9"
+  }
+}
