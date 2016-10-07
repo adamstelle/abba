@@ -1,0 +1,35 @@
+'use strict';
+
+// npm
+const Router = require('express').Router;
+const jsonParser = require('body-parser').json();
+const createError = require('http-errors');
+const debug = require('debug')('abba:profile-route');
+
+// app
+const Profile = require('../model/profile.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
+
+// constants
+const profileRouter = module.exports = Router();
+
+profileRouter.post('/api/profile', bearerAuth, jsonParser, function(req, res, next) {
+  debug('POST /api/profile');
+  
+  req.body.userID = req.user._id;
+  new Profile(req.body).save()
+  .then( profile => res.json(profile))
+  .catch(next);
+});
+
+profileRouter.get('/api/profile/:id', bearerAuth, function(req, res, next) {
+  debug('GET /api/profile/:id');
+
+  Profile.findById(req.params.id)
+  .then(profile => {
+    if (profile.userID.toString() !== req.user._id.toString())
+      return next(createError(401, 'invalid userid'));
+    res.json(profile);
+  })
+  .catch(next);
+});

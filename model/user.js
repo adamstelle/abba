@@ -7,7 +7,6 @@ const Promise = require('bluebird');
 const mongoose = require('mongoose');
 const createError = require('http-errors');
 const debug = require('debug')('abba:user');
-
 const Schema = mongoose.Schema;
 
 const userSchema = Schema({
