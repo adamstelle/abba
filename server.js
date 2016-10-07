@@ -10,6 +10,7 @@ const debug = require('debug')('abba:server');
 
 // app modules
 const authRouter = require('./route/auth-router.js');
+const errorMiddleware = require('./lib/error-middleware');
 
 // load environment vars
 dotenv.load();
@@ -27,6 +28,7 @@ app.use(cors());
 
 // app routes
 app.use(authRouter);
+app.use(errorMiddleware);
 
 // start server
 const server = module.exports = app.listen(PORT, () => {

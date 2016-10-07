@@ -36,9 +36,22 @@ describe('testing auth routes', function() {
           done();
         });
       });
-    });
-  });
+    }); //end of valid body
+    describe('with invalid or no body', function() {
+      it('should return a 400 bad request', (done) => {
+        request.post(`${url}/api/signup`)
+        .send('nope')
+        .set('Character-Type', 'application/json')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    }); //end of invalid body
+  }); //end of POST tests
+
   describe('testing GET /api/login', function() {
+    //with valid password and auth?
     describe('with valid ID and auth', function() {
       before(done => {
         let user = new User(exampleUser);
@@ -63,6 +76,48 @@ describe('testing auth routes', function() {
           done();
         });
       });
+    }); //end of with valid ID and auth
+    describe('with an invalid password and valid email', function() {
+      before(done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then(user => user.save())
+        .then(() => done());
+      });
+      after(done => {
+        User.remove()
+        .then(() => done())
+        .catch(done);
+      });
+      it('should return a 401 not authorized', (done) => {
+        request.get(`${url}/api/login`)
+        .auth('test@test.com', 'wrongpass')
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          done();
+        });
+      });
+    });//end of with invalid password and valid email
+    describe('with a valid password and invalid email', function() {
+      before(done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then(user => user.save())
+        .then(() => done());
+      });
+      after(done => {
+        User.remove()
+        .then(()=> done())
+        .catch(done);
+      });
     });
-  });
+    it('should return a 401 bad request', (done) => {
+      request.get(`${url}/api/login`)
+      .auth('wrong@test.com', 'badpass')
+      .end((err, res) => {
+        expect(res.status).to.equal(401);
+        done();
+      });
+    });
+  }); //end of GET tests
 });
