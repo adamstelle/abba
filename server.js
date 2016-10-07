@@ -11,7 +11,12 @@ const debug = require('debug')('abba:server');
 // app modules
 const errorMiddleware = require('./lib/error-middleware.js');
 const authRouter = require('./route/auth-router.js');
+<<<<<<< HEAD
 const profileRouter = require('./route/profile-router.js');
+=======
+const errorMiddleware = require('./lib/error-middleware');
+
+>>>>>>> 0d60f4b1caf56ae03f3bf34f27294f7d05636819
 // load environment vars
 dotenv.load();
 
@@ -28,9 +33,13 @@ app.use(cors());
 
 // app routes
 app.use(authRouter);
+<<<<<<< HEAD
 app.use(profileRouter);
 app.use(errorMiddleware);
 
+=======
+app.use(errorMiddleware);
+>>>>>>> 0d60f4b1caf56ae03f3bf34f27294f7d05636819
 
 // start server
 const server = module.exports = app.listen(PORT, () => {

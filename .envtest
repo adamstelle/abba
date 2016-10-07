@@ -1,0 +1,6 @@
+AWS_ACCESS_KEY_ID=fakeidhahahahh
+AWS_SECRET_ACCESS_KEY=fakekeyhahahahahah
+APP_SECRET='this is a FAKE fucking secret'
+DEBUG='abba*'
+PORT=3000
+MONGODB_URI=mongodb://localhost/abbadev
