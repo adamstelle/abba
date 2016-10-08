@@ -9,8 +9,9 @@ const mongoose = require('mongoose');
 const debug = require('debug')('abba:server');
 
 // app modules
+const errorMiddleware = require('./lib/error-middleware.js');
 const authRouter = require('./route/auth-router.js');
-const errorMiddleware = require('./lib/error-middleware');
+const profileRouter = require('./route/profile-router.js');
 
 // load environment vars
 dotenv.load();
@@ -23,11 +24,12 @@ mongoose.connect(process.env.MONGODB_URI);
 const PORT = process.env.PORT;
 const app = express();
 
-// app middleware
-app.use(cors());
-
 // app routes
 app.use(authRouter);
+app.use(profileRouter);
+
+// app middleware
+app.use(cors());
 app.use(errorMiddleware);
 
 // start server

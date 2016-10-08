@@ -1,14 +1,16 @@
 'use strict';
 
+require('./lib/test-env.js');
+
 const mongoose = require('mongoose');
 const request = require('superagent');
 const expect = require('chai').expect;
 
 const server = require('../server.js');
-const User = require('../model/user.js');
 const serverControl = require('./lib/server-control.js');
 
 const userMock = require('./lib/user-mock.js');
+const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
 mongoose.Promise = Promise;
 
@@ -20,9 +22,8 @@ describe('testing auth routes', function() {
   describe('testing POST /api/signup', function() {
     describe('with valid body', function() {
       after(done => {
-        User.remove()
-        .then(() => done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('should return a token', (done) => {
         request.post(`${url}/api/signup`)
@@ -38,7 +39,7 @@ describe('testing auth routes', function() {
         });
       });
     }); //end of valid body
-    describe('with invalid or no body', function() {
+    describe('with invalid body', function() {
       it('should return a 400 bad request', (done) => {
         request.post(`${url}/api/signup`)
         .send('nope')
@@ -49,6 +50,17 @@ describe('testing auth routes', function() {
         });
       });
     }); //end of invalid body
+    describe('with no body', function() {
+      it('should return a 400 bad request', (done) => {
+        request.post(`${url}/api/signup`)
+        .send()
+        .set('Character-Type', 'application/json')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    }); //end of no body
   }); //end of POST tests
 
   describe('testing GET /api/login', function() {
@@ -56,9 +68,8 @@ describe('testing auth routes', function() {
     describe('with valid ID and auth', function() {
       before(done => userMock.call(this, done));
       after(done => {
-        User.remove()
-        .then(() => done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('should return a token', (done) => {
         console.log('this tempuser is ', this.tempUser);
@@ -76,9 +87,8 @@ describe('testing auth routes', function() {
     describe('with an invalid password and valid email', function() {
       before(done => userMock.call(this, done));
       after(done => {
-        User.remove()
-        .then(() => done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('should return a 401 not authorized', (done) => {
         request.get(`${url}/api/login`)
@@ -92,9 +102,8 @@ describe('testing auth routes', function() {
     describe('with a valid password and invalid email', function() {
       before(done => userMock.call(this,done));
       after(done => {
-        User.remove()
-        .then(()=> done())
-        .catch(done);
+        cleanUpDatabase();
+        done();
       });
     });
     it('should return a 401 bad request', (done) => {
