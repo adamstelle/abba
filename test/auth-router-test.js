@@ -61,6 +61,27 @@ describe('testing auth routes', function() {
         });
       });
     }); //end of no body
+
+    describe('with duplicate email', function() {
+      before(done => userMock.call(this, done));
+      after(done => {
+        cleanUpDatabase();
+        done();
+      });
+      it('should return a 409 error', (done) => {
+        request.post(`${url}/api/signup`)
+        .send({
+          //this.tempUser is the fake user created by user-mock
+          email: this.tempUser.email,
+          password: this.tempUser.password,
+        })
+      .end((err, res) => {
+        expect(res.status).to.equal(409);
+        expect(res.text).to.equal('ConflictError');
+        done();
+      });
+      });
+    }); //end of duplicate email
   }); //end of POST tests
 
   describe('testing GET /api/login', function() {
