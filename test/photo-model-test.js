@@ -1,3 +1,5 @@
+// require('./lib/test-env.js');
+//
 // 'use strict';
 //
 // const awsMocks = require('../lib/aws-mocks.js');
