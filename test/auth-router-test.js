@@ -71,7 +71,6 @@ describe('testing auth routes', function() {
       it('should return a 409 error', (done) => {
         request.post(`${url}/api/signup`)
         .send({
-          //this.tempUser is the fake user created by user-mock
           email: this.tempUser.email,
           password: this.tempUser.password,
         })
@@ -82,6 +81,42 @@ describe('testing auth routes', function() {
       });
       });
     }); //end of duplicate email
+
+    describe('with no email', function(){
+      before(done => userMock.call(this, done));
+      after(done => {
+        cleanUpDatabase();
+        done();
+      });
+      it ('should return a 400 error', (done) => {
+        request.post(`${url}/api/signup`)
+        .send({
+          password: this.tempUser.password,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    }); //end of with no email
+
+    describe('with no password', function() {
+      before(done => userMock.call(this, done));
+      after(done => {
+        cleanUpDatabase();
+        done();
+      });
+      it ('should return a 400 error', (done) => {
+        request.post(`${url}/api/signup`)
+        .send({
+          email: this.tempUser.email,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    }); // end of with no password
   }); //end of POST tests
 
   describe('testing GET /api/login', function() {
