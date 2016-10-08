@@ -8,11 +8,10 @@ const expect = require('chai').expect;
 const Promise = require('bluebird');
 
 const server = require('../server.js');
-const User = require('../model/user.js');
-const Profile = require('../model/profile.js');
 const userMock = require('./lib/user-mock.js');
 const profileMock = require('./lib/profile-mock.js');
 const serverControl = require('./lib/server-control.js');
+const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
 mongoose.Promise = Promise;
 
@@ -25,12 +24,8 @@ describe('testing profile routes', function() {
     describe('testing with valid body', () => {
       before(done => userMock.call(this, done));
       after(done => {
-        Promise.all([
-          User.remove({}),
-          Profile.remove({}),
-        ])
-       .then(() => done())
-       .catch(done);
+        cleanUpDatabase();
+        done();
       });
       it('expect to return res status eqaul to 200', done => {
         let exampleProfileData = {
