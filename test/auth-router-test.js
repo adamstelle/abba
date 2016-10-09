@@ -128,12 +128,10 @@ describe('testing auth routes', function() {
         done();
       });
       it('should return a token', (done) => {
-        console.log('this tempuser is ', this.tempUser);
         request.get(`${url}/api/login`)
         .auth(this.tempUser.email, this.tempPassword)
         .end((err, res) => {
           if (err) return done(err);
-          console.log('res.text is ', res.text);
           expect(res.status).to.equal(200);
           expect(!!res.text).to.equal(true);
           done();
@@ -161,13 +159,13 @@ describe('testing auth routes', function() {
         cleanUpDatabase();
         done();
       });
-    });
-    it('should return a 401 bad request', (done) => {
-      request.get(`${url}/api/login`)
-      .auth('wrong@test.com', this.tempPassword)
-      .end((err, res) => {
-        expect(res.status).to.equal(401);
-        done();
+      it('should return a 401 bad request', (done) => {
+        request.get(`${url}/api/login`)
+        .auth('wrong@test.com', this.tempPassword)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          done();
+        });
       });
     });
   }); //end of GET tests
