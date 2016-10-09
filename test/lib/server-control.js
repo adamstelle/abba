@@ -9,7 +9,6 @@ exports.serverUp = function(server, done){
     debug('turning on server');
     server.listen(process.env.PORT, () => {
       server.isRunning = true;
-      console.log('server on');
       done();
     });
     return;
