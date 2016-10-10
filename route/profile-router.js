@@ -8,6 +8,7 @@ const debug = require('debug')('abba:profile-route');
 
 // app
 const Profile = require('../model/profile.js');
+const photoMiddleware = require('../lib/photo-aws-middleware.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 // constants
@@ -20,6 +21,12 @@ profileRouter.post('/api/profile', jsonParser, bearerAuth,  function(req, res, n
   new Profile(req.body).save()
   .then( profile => res.json(profile))
   .catch(next);
+});
+
+profileRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, photoMiddleware.photoUpload, function(req, res, next) {
+  debug('POST /api/profile/:profID/photo');
+  res.json(res.photo);
+  next();
 });
 
 profileRouter.get('/api/profile/:id', bearerAuth, function(req, res, next) {
