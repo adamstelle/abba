@@ -11,8 +11,9 @@ const residenceSchema = mongoose.Schema({
   state: {type: String, required: true},
   zip: {type: String, required: true},
   address: {type: String},
-  // userID: {type: mongoose.Schema.Types.ObjectID, required: true},
+  // profileID: {type: mongoose.Schema.Types.ObjectID, required: true},
   // bedroomID: {type: mongoose.Schema.Types.ObjectID, required: true},
+  //are we having a residence id on the residence model
 });
 
 module.exports = mongoose.model('residence', residenceSchema);
