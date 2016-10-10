@@ -24,7 +24,7 @@
 //       after(done => {
 //         cleanUpDatabase();
 //         done();
-//       });
+//       });``
 //       it('should return a token', (done) => {
 //         request.post(`${url}/api/profile/:id/residence`)
 //         .send({
