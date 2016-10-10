@@ -25,6 +25,7 @@ profileRouter.post('/api/profile', jsonParser, bearerAuth,  function(req, res, n
 
 profileRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, photoMiddleware.photoUpload, function(req, res, next) {
   debug('POST /api/profile/:profID/photo');
+  req.body.userID = req.user._id;
   res.json(res.photo);
   next();
 });
@@ -51,5 +52,22 @@ profileRouter.delete('/api/profile/:id', bearerAuth, function(req, res, next){
     return Profile.findByIdAndRemove(profile._id);
   })
   .then(next(res.status(204).send()))
-  .catch(next(createError(404, 'invalid id')));
+  .catch(next);
+});
+
+profileRouter.put('/api/profile/:id', bearerAuth, jsonParser, function(req, res, next){
+  debug('PUT /api/profile');
+
+  Profile.findById(req.params.id)
+  .then( profile => {
+    if(profile.userID.toString() !== req.user._id.toString())
+      return Promise.reject(createError(401, 'invalid userid'));
+    return Profile.findByIdAndUpdate( profile._id, req.body, { new:true});
+  })
+  .then(profile => res.json(profile))
+  .catch(err => {
+    if(err.name === 'validationError') return next(err);
+    if(err.status) return next(err);
+    next(createError(404, 'not found'));
+  });
 });
