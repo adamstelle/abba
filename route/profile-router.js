@@ -31,5 +31,18 @@ profileRouter.get('/api/profile/:id', bearerAuth, function(req, res, next) {
       return next(createError(401, 'invalid userid'));
     res.json(profile);
   })
-  .catch(next);
+  .catch(err => next(createError(404, err.message)));
+});
+
+profileRouter.delete('/api/profile/:id', bearerAuth, function(req, res, next){
+  debug('DELETE /api/profile/:id');
+
+  Profile.findById(req.params.id)
+  .then( profile => {
+    if(profile.userID.toString() !== req.user._id.toString())
+      return next(createError(401, 'invalid userid'));
+    return Profile.findByIdAndRemove(profile._id);
+  })
+  .then(next(res.status(204).send()))
+  .catch(next(createError(404, 'invalid id')));
 });
