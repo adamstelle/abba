@@ -4,4 +4,3 @@ process.env.APP_SECRET='yeah this is a great fucking secret';
 process.env.DEBUG='abba*';
 process.env.PORT=3000;
 process.env.MONGODB_URI='mongodb://localhost/abbadev';
-process.env.DEVELOPMENT = true;

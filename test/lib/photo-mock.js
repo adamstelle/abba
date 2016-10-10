@@ -5,9 +5,10 @@ const debug = require('debug')('abba:photo-mock');
 // app modules
 const Photo = require('../../model/photo.js');
 const awsMocks = require('./aws-mocks.js');
-const userMock = require('./user-mock.js');
+const profileMock = require('./profile-mock.js');
+const bedroomMock = require('./bedroom-mock.js');
 
-module.exports = function(done){
+module.exports = function(parentObj, done){
   debug('creating mock photo');
   let examplePhotoData = {
     name: 'whidbey',
@@ -16,6 +17,13 @@ module.exports = function(done){
     imageURI: awsMocks.uploadMock.Location,
     objectKey: awsMocks.uploadMock.Key,
   };
+
+  if (parentObj === 'profile') {
+    profileMock.call(this, err => {
+      if (err) return done(err);
+      examplePhotoData.userID
+    })
+  }
 
   userMock.call(this, err => {
     if (err) return done(err);

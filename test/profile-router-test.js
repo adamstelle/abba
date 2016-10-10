@@ -1,6 +1,7 @@
 'use strict';
 
 require('./lib/test-env.js');
+require('../lib/aws-mocks.js');
 
 
 const mongoose = require('mongoose');

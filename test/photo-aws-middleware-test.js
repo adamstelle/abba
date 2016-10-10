@@ -53,4 +53,22 @@ describe('testing photo middleware', function(){
       .catch(done);
     });
   });
+  // describe('testing delete a photo', ()=> {
+  //   it('should return a 204', done => {
+  //     request.post(`localhost:3000/api/profile/${this.tempProfile._id}/photo/`)
+  //     .set({
+  //       Authorization: `Bearer ${this.tempToken}`,
+  //     })
+  //     .field('name', examplePhoto.name)
+  //     .field('caption', examplePhoto.caption)
+  //     .attach('image', `${__dirname}/data/testpic.png`)
+  //     .then(res => {
+  //       expect(res.status).to.equal(200);
+  //       expect(res.body.caption).to.equal(examplePhoto.caption);
+  //       expect(res.body.imageURI).to.equal(examplePhotoResult.imageURI);
+  //       done();
+  //     })
+  //     .catch(done);
+  //   });
+  // });
 });
