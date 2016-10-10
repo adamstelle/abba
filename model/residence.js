@@ -11,8 +11,8 @@ const residenceSchema = mongoose.Schema({
   state: {type: String, required: true},
   zip: {type: String, required: true},
   address: {type: String},
-  userID: {type: mongoose.Schema.Types.ObjectID, required: true},
-  bedroomID: {type: mongoose.Schema.Types.ObjectID, required: true},
+  // userID: {type: mongoose.Schema.Types.ObjectID, required: true},
+  // bedroomID: {type: mongoose.Schema.Types.ObjectID, required: true},
 });
 
-module.exports = mongoose.model('photo', residenceSchema);
+module.exports = mongoose.model('residence', residenceSchema);
