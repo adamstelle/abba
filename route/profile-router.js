@@ -1,10 +1,12 @@
 'use strict';
 
 // npm
+const multer = require('multer');
 const Router = require('express').Router;
-const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
+const jsonParser = require('body-parser').json();
 const debug = require('debug')('abba:profile-route');
+const upload = multer({dest: `${__dirname}/../data`});
 
 // app
 const Profile = require('../model/profile.js');
@@ -23,9 +25,13 @@ profileRouter.post('/api/profile', jsonParser, bearerAuth,  function(req, res, n
   .catch(next);
 });
 
-profileRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, photoMiddleware.photoUpload, function(req, res, next) {
+profileRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.single('image'), photoMiddleware.photoUpload, function(req, res, next) {
   debug('POST /api/profile/:profID/photo');
-  res.json(res.photo);
+  next();
+});
+
+profileRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
+  debug('DELETE /api/profile/:profID/photo/:id');
   next();
 });
 

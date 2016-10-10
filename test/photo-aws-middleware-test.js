@@ -1,29 +1,24 @@
-require('./lib/test-env.js');
-
 'use strict';
 
-const awsMocks = require('../lib/aws-mocks.js');
+require('./lib/test-env.js');
 
+const awsMocks = require('../lib/aws-mocks.js');
 const expect = require('chai').expect;
-const debug = require('debug')('abba:photo-model-test');
+const debug = require('debug')('abba:photo-aws-middleware-test');
 
 const request = require('superagent');
 const server = require('../server.js');
-const User = require('../model/user.js');
-const Photo = require('../model/photo.js');
 const profileMock = require('./lib/profile-mock.js');
 const serverControl = require('./lib/server-control.js');
 const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
-// module constants
-const picURL = `${__dirname}/data/testpic.png`;
+const examplePhoto = {
+  name: 'whidbey',
+  caption: 'beautiful property with a view',
+  created: new Date(),
+};
 
-// Will need example profile
-// const exampleProfile = {
-//
-// }
-
-const examplePhotoData = {
+const examplePhotoResult = {
   name: 'whidbey',
   caption: 'beautiful property with a view',
   created: new Date(),
@@ -31,7 +26,8 @@ const examplePhotoData = {
   objectKey: awsMocks.uploadMock.Key,
 };
 
-describe('testing photo model static functions', function(){
+describe('testing photo middleware', function(){
+  debug('testing photo middleware');
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
   before(done => profileMock.call(this, done));
@@ -45,12 +41,16 @@ describe('testing photo model static functions', function(){
       .set({
         Authorization: `Bearer ${this.tempToken}`,
       })
-      .end((err, res) => {
-        if (err) return done(err);
+      .field('name', examplePhoto.name)
+      .field('caption', examplePhoto.caption)
+      .attach('image', `${__dirname}/data/testpic.png`)
+      .then(res => {
         expect(res.status).to.equal(200);
-        expect(err).to.be.null;
+        expect(res.body.caption).to.equal(examplePhoto.caption);
+        expect(res.body.imageURI).to.equal(examplePhotoResult.imageURI);
         done();
-      });
+      })
+      .catch(done);
     });
   });
 });
