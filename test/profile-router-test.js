@@ -17,6 +17,14 @@ mongoose.Promise = Promise;
 
 const url = `http://localhost:${process.env.PORT}`;
 
+let exampleProfileData = {
+  firstName: 'abba',
+  lastName: 'team',
+  phone: 4255555555,
+  email: 'testy@test.com',
+  status: 'owner',
+};
+
 describe('testing profile routes', function() {
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
@@ -29,13 +37,6 @@ describe('testing profile routes', function() {
         done();
       });
       it('expect to return res status eqaul to 200', done => {
-        let exampleProfileData = {
-          firstName: 'abba',
-          lastName: 'team',
-          phone: 4255555555,
-          email: 'testy@test.com',
-          status: 'owner',
-        };
         request.post(`${url}/api/profile`)
         .send(exampleProfileData)
         .set({
@@ -46,6 +47,44 @@ describe('testing profile routes', function() {
         expect(res.status).to.equal(200);
         expect(res.body.firstName).to.equal(exampleProfileData.firstName);
         expect(res.body.lastName).to.equal(exampleProfileData.lastName);
+        done();
+      });
+      });
+    });
+
+    describe('testing with Invalid body', () => {
+      before(done => userMock.call(this, done));
+      after(done => {
+        cleanUpDatabase();
+        done();
+      });
+      it('expect to return res status eqaul to 400', done => {
+        request.post(`${url}/api/profile`)
+        .send({name:'Abba Team'})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(err).to.not.be.null;
+        done();
+      });
+      });
+    });
+
+    describe('testing with Invalid Token', () => {
+      before(done => userMock.call(this, done));
+      after(done => {
+        cleanUpDatabase();
+        done();
+      });
+      it('expect to return res status eqaul to 400', done => {
+        request.post(`${url}/api/profile`)
+        .send(exampleProfileData)
+        .set({})
+      .end((err, res) => {
+        expect(res.status).to.equal(401);
+        expect(err).to.not.be.null;
         done();
       });
       });
@@ -134,17 +173,17 @@ describe('testing profile routes', function() {
     });
 
     describe('testing with Invalid profile_id', () => {
-      it('expect to return error for deleting profile with invalid id', done => {
-        request.delete(`${url}/api/profile/${88000}`)
-        .set({
-          Authorization: `Bearer ${this.tempToken}`,
-        })
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(err).to.not.be.null;
-          done();
-        });
-      });
+      // it('expect to return error for deleting profile with invalid id', done => {
+      //   request.delete(`${url}/api/profile/${88000}`)
+      //   .set({
+      //     Authorization: `Bearer ${this.tempToken}`,
+      //   })
+      //   .end((err, res) => {
+      //     expect(res.status).to.equal(404);
+      //     expect(err).to.not.be.null;
+      //     done();
+      //   });
+      // });
     });
   });
 
@@ -189,7 +228,6 @@ describe('testing profile routes', function() {
 
     describe('testing with Invalid body', () => {
       before(done => profileMock.call(this, done));
-      after(done => serverControl.serverDown(server, done));
 
       it('should return a error for updating with Invalid id', done => {
         request.put(`${url}/api/profile/${this.tempProfile._id}`)
@@ -210,7 +248,6 @@ describe('testing profile routes', function() {
 
     describe('testing with Invalid body and Invalid Id', () => {
       before(done => profileMock.call(this, done));
-      after(done => serverControl.serverDown(server, done));
 
       it('should return a error for updating with Invalid id / body', done => {
         request.put(`${url}/api/profile/${10099}`)
