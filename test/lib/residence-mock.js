@@ -8,7 +8,7 @@ const profileMock = require('./profile-mock.js');
 
 module.exports = function(done){
   debug('creating mock photo');
-  let exampleResidenceData = {
+  let exampleResidence = {
     dateBuilt: new Date(),
     sqft: 300,
     type: 'condo',
@@ -21,8 +21,8 @@ module.exports = function(done){
 
   profileMock.call(this, err => {
     if (err) return done(err);
-    exampleResidenceData.userID = this._id.toString();
-    new Residence(exampleResidenceData).save()
+    exampleResidence.userID = this._id.toString();
+    new Residence(exampleResidence).save()
     .then(residence => {
       this.tempResidence = residence;
       done();
