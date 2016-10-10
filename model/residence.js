@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 const residenceSchema = mongoose.Schema({
-  dateBuilt: {type: Date, default: Date.now, required: true},
+  dateBuilt: {type: Date, default: Date.now},
   sqft: {type: Number, required: true},
   type: {type: String, required: true},
   street: {type: String, required: true},
@@ -11,7 +11,8 @@ const residenceSchema = mongoose.Schema({
   state: {type: String, required: true},
   zip: {type: String, required: true},
   address: {type: String},
-  userID: {type: mongoose.Schema.Types.ObjectId, required: true},
+  userID: {type: mongoose.Schema.Types.ObjectID, required: true},
+  bedroomID: {type: mongoose.Schema.Types.ObjectID, required: true},
 });
 
 module.exports = mongoose.model('photo', residenceSchema);
