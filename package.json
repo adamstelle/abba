@@ -41,8 +41,11 @@
     "superagent": "2.3.0"
   },
   "dependencies": {
+    "aws-sdk": "2.6.7",
     "crypto": "0.0.3",
+    "del": "2.2.2",
     "eslint": "3.7.1",
-    "jsonwebtoken": "7.1.9"
+    "jsonwebtoken": "7.1.9",
+    "multer": "1.2.0"
   }
 }
