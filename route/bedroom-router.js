@@ -46,13 +46,13 @@ bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(r
   debug('DELETE /api/residence/:resID/bedroom/:id');
 
   Bedroom.findById(req.params.id)
+  .catch(err => {
+    return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
+  })
   .then( bedroom => {
     if(bedroom.userID.toString() !== req.user._id.toString())
       return Promise.reject(createError(401, 'invalid userID'));
     return Bedroom.findByIdAndRemove(bedroom._id);
-  })
-  .catch(err => {
-    return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
   })
   .then( () => {
     return  Residence.findByIdAndRemoveBedroom(req.params.resID, req.params.id);

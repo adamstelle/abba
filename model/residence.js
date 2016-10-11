@@ -37,8 +37,9 @@ Residence.findByIdAndRemoveBedroom = function(resId, bedId) {
     .catch(err => Promise.reject(createError(404, err.message)))
     .then(residence => {
       if(residence.bedrooms.length) {
-        let index = residence.bedrooms.indexOf(bedId);
-        residence.bedrooms.splice(index,1);
+        residence.bedrooms.pull({_id:bedId});
+        //let index = residence.bedrooms.indexOf(bedId);
+        //residence.bedrooms.splice(index,1);
         return residence.save();
       }
     });
