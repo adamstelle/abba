@@ -276,13 +276,14 @@ describe('testing residence routes', function() {
     describe('with valid token and id', function(){
       before(done => residenceMock.call(this, done));
       it('should return a residence', done => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence${this.tempResidence._id}`)
+        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
         .end((err, res) => {
           if (err) return done(err);
-          expect(res.body.dateBuilt).to.equal(this.tempResidence.dateBuilt);
+          let date = new Date(res.body.dateBuilt).toString();
+          expect(date).to.not.equal('Invalid Date');
           expect(res.body.sqft).to.equal(this.tempResidence.sqft);
           expect(res.body.type).to.equal(this.tempResidence.type);
           expect(res.body.street).to.equal(this.tempResidence.street);
@@ -291,8 +292,7 @@ describe('testing residence routes', function() {
           expect(res.body.zip).to.equal(this.tempResidence.zip);
           expect(res.body.address).to.equal(this.tempResidence.address);
           expect(res.body.userID).to.equal(this.tempUser._id.toString());
-          let date = new Date(res.body.created).toString();
-          expect(date).to.not.equal('Invalid Date');
+
           expect(res.status).to.equal(200);
           done();
         });
