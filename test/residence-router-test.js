@@ -247,7 +247,8 @@ describe('testing residence routes', function() {
         .end((err, res) => {
           if (err) return done(err);
           expect(res.status).to.equal(200);
-          expect(res.body.dateBuilt).to.equal(this.tempResidence.dateBuilt);
+          let date = new Date(res.body.dateBuilt).toString();
+          expect(date).to.not.equal('Invalid Date');
           expect(res.body.sqft).to.equal(this.tempResidence.sqft);
           expect(res.body.type).to.equal(this.tempResidence.type);
           expect(res.body.street).to.equal(this.tempResidence.street);
@@ -262,11 +263,11 @@ describe('testing residence routes', function() {
 
     describe('with an invalid residenceID', function() {
       before(done => residenceMock.call(this, done));
-      it('should return a 400 bad request', (done) => {
+      it('should return a 404 not found', (done) => {
         request.get(`${url}/api/profile/${this.tempProfile._id}/residence/:wrongid`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.equal(404);
           done();
         });
       });

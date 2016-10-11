@@ -29,10 +29,34 @@ residenceRouter.post('/api/profile/:profileID/residence', bearerAuth, jsonParser
   .catch(next);
 });
 
+// galleryRouter.get('/api/gallery/:id', bearerAuth, function(req, res, next){
+//   debug('GET /api/gallery/:id')
+//   Gallery.findById(req.params.id)
+//   .catch(err => Promise.reject(createError(400, err.message)))
+//   .then(gallery => {
+//     if (gallery.userID.toString() !== req.user._id.toString())
+//       return Promise.reject(createError(401, 'invalid userid'))
+//     res.json(gallery)
+//   })
+//   .catch(next)
+// })
+
+// galleryRouter.get('/api/gallery/:id', bearerAuth, function(req, res, next){
+//   debug('GET /api/gallery/:id');
+//   Gallery.findById(req.params.id)
+//   .then(gallery => {
+//     if (gallery.userID.toString() !== req.user._id.toString())
+//       return next(createError(401, 'invalid userId'));
+//     res.json(gallery);
+//   })
+//   .catch(next);
+// });
+
 residenceRouter.get('/api/profile/:profileID/residence/:resID', bearerAuth, function(req, res, next){
   debug('GET /api/residence/:resID');
 
-  Residence.findById(req.params.profileID)
+  Residence.findById(req.params.resID)
+  .catch(err => Promise.reject(createError(404, err.message)))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
       return next(createError(401, 'invalid userID'));

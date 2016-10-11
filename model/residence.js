@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 const residenceSchema = mongoose.Schema({
-  dateBuilt: {type: Date, default: Date.now},
+  dateBuilt: {type: Date},
   sqft: {type: String, required: true},
   type: {type: String, required: true},
   street: {type: String, required: true},
