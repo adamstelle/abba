@@ -23,7 +23,6 @@ describe('testing auth routes', function() {
   afterEach(done => cleanUpDatabase(done));
   describe('testing POST /api/signup', function() {
     describe('with valid body', function() {
-
       it('should return a token', (done) => {
         request.post(`${url}/api/signup`)
         .send({

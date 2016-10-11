@@ -32,7 +32,6 @@ Residence.findByIdAndAddBedroom = function(id, bedroom) {
     })
     .then( bed => {
       this.tempResidence.bedrooms.push(bed._id);
-      console.log('residence', this.tempResidence);
       this.tempBedroom = bed;
       return this.tempResidence.save();
     })

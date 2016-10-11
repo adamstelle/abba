@@ -76,7 +76,7 @@ describe('testing photo middleware', function(){
     });
     before(done => photoMock.call(this, done));
     it('should remove the photo from the profile', done => {
-      console.log('temprofile is ', this.tempProfile);
+      console.log('rpfoile is ', this.tempProfile._id);
       request.delete(`localhost:3000/api/profile/${this.tempProfile._id}/photo/${this.tempPhoto._id}`)
       .set({
         Authorization: `Bearer ${this.tempToken}`,

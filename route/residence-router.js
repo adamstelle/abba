@@ -15,7 +15,6 @@ const residenceRouter = module.exports = Router();
 
 residenceRouter.post('/api/profile/:profileID/residence', bearerAuth, jsonParser, function(req, res, next) {
   debug('POST /api/residence');
-  console.log('req.body', req.body);
   if(!req.body) return next(createError(400, 'no body'));
   Profile.findById(req.params.profileID)
   .catch( err => Promise.reject(createError(404, err.message)))
