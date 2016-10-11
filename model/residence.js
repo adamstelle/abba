@@ -29,3 +29,16 @@ Residence.findByIdAndAddBedroom = function(id, bedroom) {
       return residence.save();
     });
 };
+
+Residence.findByIdAndRemoveBedroom = function(bedId) {
+  debug('Residence: findByIdAndAddBedroom');
+
+  return Residence.find({bedrooms:{_id:bedId}})
+    .catch(err => Promise.reject(createError(404, err.message)))
+    .then(residence => {
+      residence.forEach( item => {
+        item.bedrooms.remove(bedId);
+        return item.save();
+      });
+    });
+};

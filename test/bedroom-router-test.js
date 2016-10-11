@@ -141,6 +141,7 @@ describe('testing bedroom router', function() {
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
           expect(res.status).to.equal(404);
+          expect(res.body).not.have.property('type');
           expect(err).to.not.be.null;
           done();
         });
@@ -185,5 +186,36 @@ describe('testing bedroom router', function() {
         });
       });
     });
+  });
+
+  describe('testing DELETE requests to /api/residence/:resID/bedroom', function() {
+    describe('with valid bedroom id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should delete a bedroom', (done) => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(204);
+          expect(err).to.be.null;
+          done();
+        });
+      });
+    });
+
+    // describe('with Invalid bedroom id', function() {
+    //   it('should delete a bedroom', (done) => {
+    //     before(done => bedroomMock.call(this, done));
+
+    //     request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/badID`)
+    //     .set({Authorization: `Bearer ${this.tempToken}`})
+    //     .end((err, res) => {
+    //       expect(res.status).to.equal(404);
+    //       expect(res.text).to.equal('NotFoundError');
+    //       expect(err).to.not.be.null;
+    //       done();
+    //     });
+    //   });
+    // });
   });
 });
