@@ -30,11 +30,16 @@ photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware
   .catch(next);
 });
 
-// TO DO: Add photo routes for BEDROOM
-
 photoRouter.post('/api/bedroom/:bedroomID/photo', jsonParser, bearerAuth, upload.array('image'), photoMiddleware.bedroomPhotoUpload, function(req, res, next) {
   debug('POST /api/bedroom/:bedroomID/photo');
-  Bedroom.findByIdAndAddPhotos(req.params.bedroomID, req.photo)
-  .then(() => res.json(res.photo))
+  Bedroom.findByIdAndAddPhotos(req.params.bedroomID, req.photos)
+  .then(() => res.json(req.photos))
+  .catch(next);
+});
+
+photoRouter.delete('/api/bedroom/:bedroomID/photo/:id', bearerAuth, photoMiddleware.bedroomPhotoDelete, function(req, res, next) {
+  debug('DELETE /api/bedroom/:bedroomID/photo/:id');
+  Bedroom.findByIdAndRemovePhoto(req.params.profID, req.photo)
+  .then(() => res.sendStatus(204))
   .catch(next);
 });

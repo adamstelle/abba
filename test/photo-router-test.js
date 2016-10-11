@@ -1,6 +1,6 @@
 'use strict';
 
-// const awsMocks = require('../lib/aws-mocks.js');
+const awsMocks = require('../lib/aws-mocks.js');
 const expect = require('chai').expect;
 const debug = require('debug')('abba:photo-aws-middleware-test');
 
@@ -25,8 +25,8 @@ const examplePhotoResult = {
   name: 'whidbey',
   caption: 'beautiful property with a view',
   created: new Date(),
-  // imageURI: awsMocks.uploadMock.Location,
-  // objectKey: awsMocks.uploadMock.Key,
+  imageURI: awsMocks.uploadMock.Location,
+  objectKey: awsMocks.uploadMock.Key,
 };
 
 debug();
@@ -45,7 +45,7 @@ describe('testing photo middleware', function(){
         })
         .field('name', examplePhoto.name)
         .field('caption', examplePhoto.caption)
-        .attach('image', `${__dirname}/data/testpic.png`)
+        .attach('image', `${__dirname}/data/img1.jpg`)
         .then(res => {
           Profile.findById(this.tempProfile._id)
           .populate('photo')
@@ -99,19 +99,20 @@ describe('testing photo middleware', function(){
         })
         .field('name', examplePhoto.name)
         .field('caption', examplePhoto.caption)
-        .attach('image', `${__dirname}/data/testpic.png`)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .attach('image', `${__dirname}/data/img2.jpg`)
+        .attach('image', `${__dirname}/data/img3.jpg`)
+        .attach('image', `${__dirname}/data/img4.jpg`)
         .then(res => {
-          console.log('posting is HIT');
           Bedroom.findById(this.tempBedroom._id)
-          .populate('photos')
+          .populate('bedroom')
           .then(bedroom => {
-            expect(bedroom.photo.imageURI).to.equal(examplePhotoResult.imageURI);
-            expect(bedroom.photo.objectKey).to.equal(examplePhotoResult.objectKey);
+            expect(res.status).to.equal(200);
+            expect(res.body[0].userID).to.equal(bedroom.userID.toString());
+            expect(res.body[0].imageURI).to.equal(examplePhotoResult.imageURI);
+            expect(res.body[0].caption).to.equal(examplePhoto.caption);
+            done();
           });
-          expect(res.status).to.equal(200);
-          expect(res.body.caption).to.equal(examplePhoto.caption);
-          expect(res.body.imageURI).to.equal(examplePhotoResult.imageURI);
-          done();
         })
         .catch(done);
       });
