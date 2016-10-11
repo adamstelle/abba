@@ -42,7 +42,7 @@ bedroomRouter.get('/api/residence/:resID/bedroom/:id', bearerAuth, function(req,
 //   debug('PUT /api/residence/:resID/bedroom/:bedID');
 // });
 
-bedroomRouter.delete('/api/residence/:resID/bedroom/:bedID', bearerAuth, function(req, res, next) {
+bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(req, res, next) {
   debug('DELETE /api/residence/:resID/bedroom/:id');
 
   Bedroom.findById(req.params.id)
@@ -53,6 +53,9 @@ bedroomRouter.delete('/api/residence/:resID/bedroom/:bedID', bearerAuth, functio
   })
   .catch(err => {
     return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
+  })
+  .then( () => {
+    return  Residence.findByIdAndRemoveBedroom(req.params.resID, req.params.id);
   })
   .then(() => res.status(204).send())
   .catch(next);

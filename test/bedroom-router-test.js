@@ -193,6 +193,7 @@ describe('testing bedroom router', function() {
       before(done => bedroomMock.call(this, done));
 
       it('should delete a bedroom', (done) => {
+        console.log('this.tempBedroom._id',this.tempBedroom._id);
         request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {

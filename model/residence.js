@@ -30,15 +30,16 @@ Residence.findByIdAndAddBedroom = function(id, bedroom) {
     });
 };
 
-Residence.findByIdAndRemoveBedroom = function(bedId) {
-  debug('Residence: findByIdAndAddBedroom');
+Residence.findByIdAndRemoveBedroom = function(resId, bedId) {
+  debug('Residence: findByIdAndRemoveBedroom');
 
-  return Residence.find({bedrooms:{_id:bedId}})
+  return Residence.findById(resId)
     .catch(err => Promise.reject(createError(404, err.message)))
     .then(residence => {
-      residence.forEach( item => {
-        item.bedrooms.remove(bedId);
-        return item.save();
-      });
+      if(residence.bedrooms.length) {
+        let index = residence.bedrooms.indexOf(bedId);
+        residence.bedrooms.splice(index,1);
+        return residence.save();
+      }
     });
 };
