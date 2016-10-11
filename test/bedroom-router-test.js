@@ -118,7 +118,7 @@ describe('testing bedroom router', function() {
     });
   });
 
-  describe('testing GET requests to /api/residence/:resID/bedroom/:id', function() {
+  describe('testing GET requests to /api/residence/:resID/bedroom', function() {
     describe('with valid residence and bedroom id', function() {
       before(done => bedroomMock.call(this, done));
 
@@ -128,6 +128,38 @@ describe('testing bedroom router', function() {
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(err).to.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid bedroom_id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return a 404 error', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${112233}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid Token', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return a 404 error', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken + ' '}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.body).to.not.have.property('type');
+          expect(res.body).to.not.have.property('bedSize');
+          expect(res.body).to.not.have.property('bedType');
+          expect(res.body).to.not.have.property('sleepNum');
+          expect(err).to.not.be.null;
           done();
         });
       });
