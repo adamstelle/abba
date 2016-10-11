@@ -13,6 +13,7 @@ const userSchema = Schema({
   email: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   findHash: {type: String, unique: true},
+  // profileID: {type: mongoose.Schema.Types.ObjectId, required: true},
   // profile: TBD
 });
 

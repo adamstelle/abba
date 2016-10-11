@@ -13,13 +13,13 @@ module.exports = function(done){
   let exampleProfileData = {
     firstName: 'abba',
     lastName: 'team',
-    phone: 4255555555,
-    email: email,
+    phone: '4255555555',
+    email: `${email}@slug.slug`,
     status: 'owner',
   };
   userMock.call(this, err => {
     if (err) return done(err);
-    exampleProfileData.userID = this.tempUser._id.toString();
+    exampleProfileData.userID = this.tempUser._id;
     new Profile(exampleProfileData).save()
     .then(profile => {
       this.tempProfile = profile;

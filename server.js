@@ -2,10 +2,12 @@
 
 // npm modules
 const cors = require('cors');
+const morgan = require('morgan');
 const dotenv = require('dotenv');
 const express = require('express');
 const Promise = require('bluebird');
 const mongoose = require('mongoose');
+
 const debug = require('debug')('abba:server');
 
 // app modules
@@ -13,7 +15,7 @@ const authRouter = require('./route/auth-router.js');
 const profileRouter = require('./route/profile-router.js');
 // const bedroomRouter = require('./router/bedroom-router.js');
 const errorMiddleware = require('./lib/error-middleware.js');
-// const residenceRouter = require('./router/residence-router.js');
+const residenceRouter = require('./route/residence-router.js');
 
 // load environment vars
 dotenv.load();
@@ -27,9 +29,10 @@ const PORT = process.env.PORT;
 const app = express();
 
 // app routes
+app.use(morgan('dev'));
 app.use(authRouter);
 app.use(profileRouter);
-// app.use(residenceRouter);
+app.use(residenceRouter);
 // app.use(bedroomRouter);
 
 // app middleware
