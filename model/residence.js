@@ -4,16 +4,16 @@ const mongoose = require('mongoose');
 
 const residenceSchema = mongoose.Schema({
   dateBuilt: {type: Date, default: Date.now},
-  sqft: {type: Number, required: true},
+  sqft: {type: String, required: true},
   type: {type: String, required: true},
   street: {type: String, required: true},
-  city: {type: String, requried: true},
+  city: {type: String, required: true},
   state: {type: String, required: true},
   zip: {type: String, required: true},
-  address: {type: String},
-  // profileID: {type: mongoose.Schema.Types.ObjectID, required: true},
-  // bedroomID: {type: mongoose.Schema.Types.ObjectID, required: true},
-  //are we having a residence id on the residence model
+  address: {type: String, unique: true},
+  userID: {type: mongoose.Schema.Types.ObjectId, required: true},
+  profileID: {type: mongoose.Schema.Types.ObjectId, required: true},
+  // bedrooms: [{type: mongoose.Schema.Types.ObjectID, required: true, ref: 'bedroom'}],
 });
 
 module.exports = mongoose.model('residence', residenceSchema);

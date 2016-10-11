@@ -8,25 +8,31 @@ const debug = require('debug')('abba:residence-router');
 
 //app modules
 const Residence = require('../model/residence.js');
+const Profile = require('../model/profile.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const residenceRouter = module.exports = Router();
 
-//post a new residence
-//after it's sent through the model, will have a user id and bedroom ID
-residenceRouter.post('/api/residence', bearerAuth, jsonParser, function(req, res, next) {
+residenceRouter.post('/api/profile/:profileID/residence', bearerAuth, jsonParser, function(req, res, next) {
   debug('POST /api/residence');
-  new Residence(req.body).save()
-  .then(residence => res.json(residence))
+  console.log('req.body', req.body);
+  if(!req.body) return next(createError(400, 'no body'));
+  Profile.findById(req.params.profileID)
+  .catch( err => Promise.reject(createError(404, err.message)))
+  .then(() => {
+    let residence = req.body;
+    residence.profileID = req.params.profileID;
+    residence.userID = req.user._id;
+    return new Residence(residence).save()
+    .then(result => res.json(result));
+  })
   .catch(next);
 });
 
-//fetch a residence
-residenceRouter.get('/api/profile/:userID/residence/:resID', bearerAuth, function(req, res, next){
+residenceRouter.get('/api/profile/:profileID/residence/:resID', bearerAuth, function(req, res, next){
   debug('GET /api/residence/:resID');
 
-//are we finding the residence by the residence ID? or by the profile ID?
-  Residence.findById(req.params.id)
+  Residence.findById(req.params.profileID)
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
       return next(createError(401, 'invalid userID'));
@@ -35,8 +41,7 @@ residenceRouter.get('/api/profile/:userID/residence/:resID', bearerAuth, functio
   .catch(next);
 });
 
-//delete a residence
-residenceRouter.delete('/api/profile/:userID/residence/:resID', bearerAuth, function(req, res, next) {
+residenceRouter.delete('/api/profile/:profileID/residence/:resID', bearerAuth, function(req, res, next) {
   debug('DELETE /api/residence/:resID');
 
   Residence.findById(req.params.id)

@@ -23,9 +23,9 @@
   ---
 
   ## Residence Routes:
-  - POST : /api/residence
-  - GET  :  /api/residence/:id
-  - DELETE  :  /api/residence/:id
+  - POST : /api/profile/:profileID/residence
+  - GET  :  /api/profile/:profileID/residence/:resid
+  - DELETE  :  /api/profile/:profileID/residence/:resid
 
   ## Residence / Bedroom Routes:
   - GET : /api/residence/:resID/bedroom/:bedID
