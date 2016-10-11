@@ -20,12 +20,9 @@ const url = `http://localhost:${process.env.PORT}`;
 describe('testing auth routes', function() {
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
+  afterEach(done => cleanUpDatabase(done));
   describe('testing POST /api/signup', function() {
     describe('with valid body', function() {
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('should return a token', (done) => {
         request.post(`${url}/api/signup`)
         .send({
@@ -65,10 +62,6 @@ describe('testing auth routes', function() {
 
     describe('with duplicate email', function() {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('should return a 409 error', (done) => {
         request.post(`${url}/api/signup`)
         .send({
@@ -85,10 +78,7 @@ describe('testing auth routes', function() {
 
     describe('with no email', function(){
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
+
       it ('should return a 400 error', (done) => {
         request.post(`${url}/api/signup`)
         .send({
@@ -103,10 +93,6 @@ describe('testing auth routes', function() {
 
     describe('with no password', function() {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it ('should return a 400 error', (done) => {
         request.post(`${url}/api/signup`)
         .send({
@@ -124,10 +110,6 @@ describe('testing auth routes', function() {
     //with valid password and auth?
     describe('with valid ID and auth', function() {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('should return a token', (done) => {
         request.get(`${url}/api/login`)
         .auth(this.tempUser.email, this.tempPassword)
@@ -141,10 +123,6 @@ describe('testing auth routes', function() {
     }); //end of with valid ID and auth
     describe('with an invalid password and valid email', function() {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('should return a 401 not authorized', (done) => {
         request.get(`${url}/api/login`)
         .auth(this.tempUser.email, 'wrongpass')
@@ -156,10 +134,6 @@ describe('testing auth routes', function() {
     });//end of with invalid password and valid email
     describe('with a valid password and invalid email', function() {
       before(done => userMock.call(this,done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('should return a 401 bad request', (done) => {
         request.get(`${url}/api/login`)
         .auth('wrong@test.com', this.tempPassword)

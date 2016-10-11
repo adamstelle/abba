@@ -4,11 +4,11 @@ const debug = require('debug')('abba:photo-mock');
 
 // app modules
 const Photo = require('../../model/photo.js');
-const awsMocks = require('./aws-mocks.js');
+const Profile = require('../../model/profile.js');
+const awsMocks = require('../../lib/aws-mocks.js');
 const profileMock = require('./profile-mock.js');
-const bedroomMock = require('./bedroom-mock.js');
 
-module.exports = function(parentObj, done){
+module.exports = function(done){
   debug('creating mock photo');
   let examplePhotoData = {
     name: 'whidbey',
@@ -18,20 +18,17 @@ module.exports = function(parentObj, done){
     objectKey: awsMocks.uploadMock.Key,
   };
 
-  if (parentObj === 'profile') {
-    profileMock.call(this, err => {
-      if (err) return done(err);
-      examplePhotoData.userID
-    })
-  }
-
-  userMock.call(this, err => {
+  profileMock.call(this, err => {
     if (err) return done(err);
-    examplePhotoData.userID = this._id.toString();
+    examplePhotoData.userID = this.tempProfile.userID.toString();
     new Photo(examplePhotoData).save()
     .then(photo => {
-      this.tempPhoto = photo;
-      done();
+      Profile.findByIdAndAddPhoto(this.tempProfile._id, photo)
+      .then(() => {
+        this.tempPhoto = photo;
+        done();
+      })
+      .catch(done);
     })
     .catch(done);
   });

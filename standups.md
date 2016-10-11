@@ -1,4 +1,4 @@
-Standup - Morning Oct 10th
+Standup - Morning Monday Oct 10th
 
 Current status
 Finished:
@@ -20,3 +20,14 @@ Goals for morning:
 - Finish writing tests for Residence routes: GET / POST / DELETE
 - Finish testing for Profile GET / POST / PUT / DELETE
 - Photo middleware (aws) 25% done - single test
+
+Review - Night Monday Oct 10th
+To Dos
+
+BUGS (5)
+- Debug photo delete mongoose error
+- POST api/profile route error
+- GET api/profile route error
+-
+
+Broader To-Dos
