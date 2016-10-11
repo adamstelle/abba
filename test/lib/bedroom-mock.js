@@ -17,11 +17,12 @@ module.exports = function(done){
 
   residenceMock.call(this, err => {
     if (err) return done(err);
+    this.tempResidence = this.tempResidence;
     exampleBedroom.residenceID = this.tempResidence._id;
     exampleBedroom.userID = this.tempUser._id.toString();
     new Bedroom(exampleBedroom).save()
     .then(bedroom => {
-      this.tempbedroom = bedroom;
+      this.tempBedroom = bedroom;
       done();
     })
     .catch(done);
