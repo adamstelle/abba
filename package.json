@@ -46,7 +46,7 @@
     "del": "2.2.2",
     "eslint": "3.7.1",
     "jsonwebtoken": "7.1.9",
-    "morgan": "1.7.0",
+    "morgan": "^1.7.0",
     "multer": "1.2.0"
   }
 }

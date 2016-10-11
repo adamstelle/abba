@@ -15,6 +15,7 @@ const authRouter = require('./route/auth-router.js');
 const photoRouter = require('./route/photo-router.js');
 const bedroomRouter = require('./route/bedroom-router.js');
 const profileRouter = require('./route/profile-router.js');
+const estimateRouter = require('./route/estimate-router.js');
 const errorMiddleware = require('./lib/error-middleware.js');
 const residenceRouter = require('./route/residence-router.js');
 
@@ -34,6 +35,7 @@ app.use(authRouter);
 app.use(photoRouter);
 app.use(bedroomRouter);
 app.use(profileRouter);
+app.use(estimateRouter);
 app.use(residenceRouter);
 
 // app middleware

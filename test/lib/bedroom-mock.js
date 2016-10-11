@@ -1,5 +1,5 @@
 'use strict';
-const debug = require('debug')('abba:residence-mock');
+const debug = require('debug')('abba:bedroom-mock');
 
 const Bedroom = require('../../model/bedroom.js');
 const residenceMock = require('./residence-mock.js');
