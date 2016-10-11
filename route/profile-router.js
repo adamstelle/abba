@@ -13,14 +13,14 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 // constants
 const profileRouter = module.exports = Router();
 
-profileRouter.post('/api/profile', jsonParser, bearerAuth, function(req, res, next) {
+profileRouter.post('/api/profile', bearerAuth, jsonParser, function(req, res, next) {
   debug('POST /api/profile');
   req.body.userID = req.user._id;
   new Profile(req.body).save()
   .then(profile => res.json(profile))
   .catch(err => {
-    console.log('err is ', err.message);
-    next(createError(401, err.message));
+    if (err.message === 'profile validation failed') next(createError(400, err.message));
+    else next(createError(401, err.message));
   });
 });
 

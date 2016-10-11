@@ -181,25 +181,25 @@ describe('testing profile routes', function() {
   });
 
   describe('testing PUT api/profile/:id', () => {
+    let updatedProfile = {
+      firstName: 'abba2',
+      lastName: 'team2',
+      phone: 4255000000,
+    };
     describe('testing with valid body / id', () => {
       before(done => profileMock.call(this, done));
       it('should update a profile with valid id / body', done => {
-        let examProfile = {
-          firstName: 'abba2',
-          lastName: 'team2',
-          phone: 4255000000,
-        };
         request.put(`${url}/api/profile/${this.tempProfile._id}`)
           .set({
             Authorization: `Bearer ${this.tempToken}`,
           })
-          .send(examProfile)
+          .send(updatedProfile)
           .end((err, res) => {
             if(err) done(err);
             expect(res.status).to.equal(200);
-            expect(res.body.firstName).to.equal(examProfile.firstName);
-            expect(res.body.lastName).to.equal(examProfile.lastName);
-            expect(res.body.phone).to.equal(examProfile.phone.toString());
+            for (var i in updatedProfile) {
+              expect(res.body[i]).to.equal(updatedProfile[i]);
+            }
             expect(res.body).to.have.property('email');
             expect(res.body).to.have.property('status');
             expect(err).to.be.null;
@@ -214,7 +214,7 @@ describe('testing profile routes', function() {
           .set({
             Authorization: `Bearer ${this.tempToken}`,
           })
-          .send({firstName: 'abba2', lastName: 'team2', phone: 4255000000})
+          .send(updatedProfile)
           .end((err, res) => {
             expect(res.status).to.equal(404);
             expect(err).to.not.be.null;

@@ -13,7 +13,7 @@ const residenceSchema = mongoose.Schema({
   city: {type: String, required: true},
   state: {type: String, required: true},
   zip: {type: String, required: true},
-  address: {type: String},
+  address: {type: String, unique: true},
   userID: {type: mongoose.Schema.Types.ObjectId, required: true},
   bedrooms: [{type: mongoose.Schema.Types.ObjectId, ref: 'bedroom'}],
 });

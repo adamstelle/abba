@@ -18,6 +18,17 @@ mongoose.Promise = Promise;
 
 const url = `http://localhost:${process.env.PORT}`;
 
+const exampleResidenceData = {
+  dateBuilt: new Date(),
+  sqft: '300',
+  type: 'apartment',
+  street: '100 first street',
+  city: 'seattle',
+  state: 'WA',
+  zip: '12345',
+  address: '100 first street, seattle, WA 12345',
+};
+
 describe('testing residence routes', function() {
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
@@ -29,16 +40,7 @@ describe('testing residence routes', function() {
       it('should return a residence', (done) => {
         request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
-        .send({
-          dateBuilt: new Date(),
-          sqft: '300',
-          type: 'apartment',
-          street: '100 first street',
-          city: 'seattle',
-          state: 'WA',
-          zip: '12345',
-          address: '100 first street, seattle, WA 12345',
-        })
+        .send(exampleResidenceData)
         .end((err, res) => {
           if (err) return done(err);
           expect(res.status).to.equal(200);
@@ -78,7 +80,6 @@ describe('testing residence routes', function() {
     }); //end of no body
 
     describe('with duplicate address', function() {
-      // before(done => profileMock.call(this, done));
       before(done => residenceMock.call(this, done));
 
       it('should return a 409 error', (done) => {
@@ -328,11 +329,10 @@ describe('testing residence routes', function() {
 
     describe('with no Authorization header', function(){
       before(done => residenceMock.call(this, done));
-      it('should return a 400 error with no Authorization header', done => {
+      it('should return a 401 error with no Authorization header', done => {
         request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
         .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
+          expect(res.status).to.equal(401);
           done();
         });
       });

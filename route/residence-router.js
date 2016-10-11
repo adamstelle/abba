@@ -17,7 +17,7 @@ residenceRouter.post('/api/profile/:profileID/residence', bearerAuth, jsonParser
   debug('POST /api/residence');
   if(!req.body) return next(createError(400, 'no body'));
   Profile.findById(req.params.profileID)
-  .catch( err => Promise.reject(createError(404, err.message)))
+  .catch(err => Promise.reject(createError(404, err.message)))
   .then(() => {
     let residence = req.body;
     residence.profileID = req.params.profileID;
