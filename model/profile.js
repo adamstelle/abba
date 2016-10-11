@@ -13,6 +13,7 @@ const profileSchema = mongoose.Schema({
   email: {type: String, required: true, unique: true},
   status: {type: String, required: true},
   userID: {type: mongoose.Schema.Types.ObjectId, required: true},
+  photo: { type:mongoose.Schema.Types.ObjectId, ref:'photo'},
 });
 
 module.exports = mongoose.model('profile', profileSchema);
