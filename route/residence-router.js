@@ -42,13 +42,18 @@ residenceRouter.get('/api/profile/:profileID/residence/:resID', bearerAuth, func
   .catch(next);
 });
 
-residenceRouter.delete('/api/profile/:profileID/residence/:resID', bearerAuth, function(req, res, next) {
-  debug('DELETE /api/residence/:resID');
-
-  Residence.findById(req.params.id)
-  .then(residence => {
-    if (residence.userID.toString() !== req.user._id.toString())
-      return next(createError(401, 'invalid userID'));
-    Residence.remove();
-  });
-});
+// residenceRouter.delete('/api/profile/:profileID/residence/:resID', bearerAuth, function(req, res, next) {
+//   debug('DELETE /api/residence/:resID');
+//
+//   Residence.findById(req.params.id)
+//   .catch(err => Promise.reject(createError(400, err.message)))
+//   .then(residence => {
+//     if (residence.userID.toString() !== req.user._id.toString())
+//       return next(createError(401, 'invalid userID'));
+//     let oldResidence = residence;
+//     return oldResidence;
+//   });
+//   Residence.remove(oldResidence)
+//   .then(() => res.sendStatus(204))
+//   .catch(err => next(createError(404, err.message)));
+// });

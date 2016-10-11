@@ -357,83 +357,83 @@ describe('testing residence routes', function() {
     });
   }); //end of GET tests
 
-  describe('testing DELETE /api/profile/:id/residence/:id', function(){
-
-    describe('with valid token and ids', function(){
-      before(done => residenceMock.call(this, done));
-
-      it('should respond with status 204', done => {
-        request.delete(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
-        .set({Authorization: `Bearer ${this.tempToken}`})
-        .end((err, res) => {
-          if (err) return done(err);
-          expect(res.status).to.equal(204);
-          done();
-        });
-      });
-    });
-    describe('with invalid token', function(){
-      before(done => residenceMock.call(this, done));
-      it('should respond with status 401', done => {
-        request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
-        .set({Authorization: `Bearer ${this.tempToken}bad`})
-        .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.text).to.equal('UnauthorizedError');
-          done();
-        });
-      });
-    });
-
-    describe('no auth header', function(){
-      before(done => residenceMock.call(this, done));
-      it('should respond with status 400', done => {
-        request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
-          done();
-        });
-      });
-    });
-
-    describe('with no bearer auth', function(){
-      before(done => residenceMock.call(this, done));
-      it('should respond with status 400', done => {
-        request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
-        .set({Authorization: 'lul this is bad}'})
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
-          done();
-        });
-      });
-    });
-
-    describe('with invalid profileID', function(){
-      before(done => residenceMock.call(this, done));
-      it('should respond with status 400', done => {
-        request.delete(`${url}/api/profile/${this.tempProfile._id}bad/pic/${this.tempResidence._id}`)
-        .set({Authorization: `Bearer ${this.tempToken}`})
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
-          done();
-        });
-      });
-    });
-
-    describe('with invalid residenceID', function(){
-      before(done => residenceMock.call(this, done));
-      it('should respond with status 404', done => {
-        request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}bad`)
-        .set({Authorization: `Bearer ${this.tempToken}`})
-        .end((err, res) => {
-          expect(res.status).to.equal(404);
-          expect(res.text).to.equal('NotFoundError');
-          done();
-        });
-      });
-    });
-  });
+  // describe('testing DELETE /api/profile/:id/residence/:id', function(){
+  //
+  //   describe('with valid token and ids', function(){
+  //     before(done => residenceMock.call(this, done));
+  //
+  //     it('should respond with status 204', done => {
+  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
+  //       .set({Authorization: `Bearer ${this.tempToken}`})
+  //       .end((err, res) => {
+  //         if (err) return done(err);
+  //         expect(res.status).to.equal(204);
+  //         done();
+  //       });
+  //     });
+  //   });
+  //   describe('with invalid token', function(){
+  //     before(done => residenceMock.call(this, done));
+  //     it('should respond with status 401', done => {
+  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
+  //       .set({Authorization: `Bearer ${this.tempToken}bad`})
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(401);
+  //         expect(res.text).to.equal('UnauthorizedError');
+  //         done();
+  //       });
+  //     });
+  //   });
+  //
+  //   describe('no auth header', function(){
+  //     before(done => residenceMock.call(this, done));
+  //     it('should respond with status 400', done => {
+  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(400);
+  //         expect(res.text).to.equal('BadRequestError');
+  //         done();
+  //       });
+  //     });
+  //   });
+  //
+  //   describe('with no bearer auth', function(){
+  //     before(done => residenceMock.call(this, done));
+  //     it('should respond with status 400', done => {
+  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
+  //       .set({Authorization: 'lul this is bad}'})
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(400);
+  //         expect(res.text).to.equal('BadRequestError');
+  //         done();
+  //       });
+  //     });
+  //   });
+  //
+  //   describe('with invalid profileID', function(){
+  //     before(done => residenceMock.call(this, done));
+  //     it('should respond with status 400', done => {
+  //       request.delete(`${url}/api/profile/${this.tempProfile._id}bad/pic/${this.tempResidence._id}`)
+  //       .set({Authorization: `Bearer ${this.tempToken}`})
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(400);
+  //         expect(res.text).to.equal('BadRequestError');
+  //         done();
+  //       });
+  //     });
+  //   });
+  //
+  //   describe('with invalid residenceID', function(){
+  //     before(done => residenceMock.call(this, done));
+  //     it('should respond with status 404', done => {
+  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}bad`)
+  //       .set({Authorization: `Bearer ${this.tempToken}`})
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(404);
+  //         expect(res.text).to.equal('NotFoundError');
+  //         done();
+  //       });
+  //     });
+  //   });
+  // });
 });
