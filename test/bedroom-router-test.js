@@ -35,16 +35,16 @@ describe('testing bedroom router', function() {
     describe('with valid body', function() {
       before(done => residenceMock.call(this, done));
 
-      it('should return a bedroom', (done) => {
-        request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
-        .send(exampleBedroom)
-        .set({Authorization: `Bearer ${this.tempToken}`})
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(err).to.be.null;
-          done();
-        });
-      });
+      // it('should return a bedroom', (done) => {
+      //   request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
+      //   .send(exampleBedroom)
+      //   .set({Authorization: `Bearer ${this.tempToken}`})
+      //   .end((err, res) => {
+      //     expect(res.status).to.equal(200);
+      //     expect(err).to.be.null;
+      //     done();
+      //   });
+      // });
     });
 
     // describe('with invalid body', function() {
