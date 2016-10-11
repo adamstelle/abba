@@ -31,10 +31,9 @@ residenceRouter.post('/api/profile/:profileID/residence', bearerAuth, jsonParser
 
 residenceRouter.get('/api/profile/:profileID/residence/:resID', bearerAuth, function(req, res, next){
   debug('GET /api/residence/:resID');
-  console.log('IS THIS EVEN WORKINGGGGGGG');
 
   Residence.findById(req.params.resID)
-  .catch(err => Promise.reject(createError(404, err.message)))
+  .catch(err => Promise.reject(createError(400, err.message)))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
       return next(createError(401, 'invalid userID'));
