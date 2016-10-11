@@ -33,12 +33,12 @@ describe('testing residence routes', function() {
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
   afterEach(done => cleanUpDatabase(done));
-  describe('testing POST /api/profile/:profileid/residence', function() {
+  describe('testing POST /api/residence', function() {
     describe('with valid body', function() {
       before(done => profileMock.call(this, done));
 
       it('should return a residence', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send(exampleResidenceData)
         .end((err, res) => {
@@ -53,7 +53,7 @@ describe('testing residence routes', function() {
       before(done => profileMock.call(this, done));
 
       it('should return a 400 bad request', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send('nope')
         .set('Character-Type', 'application/json')
@@ -68,7 +68,7 @@ describe('testing residence routes', function() {
       before(done => profileMock.call(this, done));
 
       it('should return a 400 bad request', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .send()
         .set('Character-Type', 'application/json')
         .set({Authorization: `Bearer ${this.tempToken}`})
@@ -83,7 +83,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it('should return a 409 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -107,7 +107,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it ('should return a 400 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -129,7 +129,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it ('should return a 400 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -151,7 +151,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it ('should return a 400 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -173,7 +173,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it ('should return a 400 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -195,7 +195,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it ('should return a 400 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -217,7 +217,7 @@ describe('testing residence routes', function() {
       before(done => residenceMock.call(this, done));
 
       it ('should return a 400 error', (done) => {
-        request.post(`${url}/api/profile/${this.tempProfile._id}/residence`)
+        request.post(`${url}/api/residence`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .send({
           dateBuilt: this.tempResidence.dateBuilt,
@@ -236,12 +236,12 @@ describe('testing residence routes', function() {
     }); //end of with no sqft
   }); //end of POST tests
 
-  describe('testing GET /api/profile/:id/residence/:id', function() {
+  describe('testing GET /api/:id/residence/:id', function() {
     //with valid password and auth?
     describe('with valid ID', function() {
       before(done => residenceMock.call(this, done));
       it('should return a residenceID', (done) => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
+        request.get(`${url}/api/residence/${this.tempResidence._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
           if (err) return done(err);
@@ -263,7 +263,7 @@ describe('testing residence routes', function() {
     describe('with an invalid residenceID', function() {
       before(done => residenceMock.call(this, done));
       it('should return a 400 not found', (done) => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/:wrongid`)
+        request.get(`${url}/api/residence/:wrongid`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
           //may be a false positive. Error handling in residence get router sends 400 error if anything goes wrong with Residence.findById
@@ -276,7 +276,7 @@ describe('testing residence routes', function() {
     describe('with valid token and id', function(){
       before(done => residenceMock.call(this, done));
       it('should return a residence', done => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
+        request.get(`${url}/api/residence/${this.tempResidence._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
@@ -302,7 +302,7 @@ describe('testing residence routes', function() {
     describe('with invalid token', function(){
       before(done => residenceMock.call(this, done));
       it('should return a 401 with bad token', done => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
+        request.get(`${url}/api/residence/${this.tempResidence._id}`)
         .set({
           Authorization: 'Bearer ',
         })
@@ -317,7 +317,7 @@ describe('testing residence routes', function() {
     describe('with invalid Bearer auth', function(){
       before(done => residenceMock.call(this, done));
       it('should return a 401 error with invalid Bearer', done => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
+        request.get(`${url}/api/residence/${this.tempResidence._id}`)
         .set({ Authorization: 'bad request' })
         .end((err, res) => {
           expect(res.status).to.equal(401);
@@ -330,7 +330,7 @@ describe('testing residence routes', function() {
     describe('with no Authorization header', function(){
       before(done => residenceMock.call(this, done));
       it('should return a 401 error with no Authorization header', done => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
+        request.get(`${url}/api/residence/${this.tempResidence._id}`)
         .end((err, res) => {
           expect(res.status).to.equal(401);
           done();
@@ -341,7 +341,7 @@ describe('testing residence routes', function() {
     describe('with invalid id', function(){
       before(done => residenceMock.call(this, done));
       it('should return a 400 error with invalid ID', done => {
-        request.get(`${url}/api/profile/${this.tempProfile._id}/residence/invalid`)
+        request.get(`${url}/api/residence/invalid`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
@@ -355,83 +355,71 @@ describe('testing residence routes', function() {
     });
   });
 
-  // describe('testing DELETE /api/profile/:id/residence/:id', function(){
-  //
-  //   describe('with valid token and ids', function(){
-  //     before(done => residenceMock.call(this, done));
-  //
-  //     it('should respond with status 204', done => {
-  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
-  //       .set({Authorization: `Bearer ${this.tempToken}`})
-  //       .end((err, res) => {
-  //         if (err) return done(err);
-  //         expect(res.status).to.equal(204);
-  //         done();
-  //       });
-  //     });
-  //   });
-  //   describe('with invalid token', function(){
-  //     before(done => residenceMock.call(this, done));
-  //     it('should respond with status 401', done => {
-  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
-  //       .set({Authorization: `Bearer ${this.tempToken}bad`})
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(401);
-  //         expect(res.text).to.equal('UnauthorizedError');
-  //         done();
-  //       });
-  //     });
-  //   });
-  //
-  //   describe('no auth header', function(){
-  //     before(done => residenceMock.call(this, done));
-  //     it('should respond with status 400', done => {
-  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(400);
-  //         expect(res.text).to.equal('BadRequestError');
-  //         done();
-  //       });
-  //     });
-  //   });
-  //
-  //   describe('with no bearer auth', function(){
-  //     before(done => residenceMock.call(this, done));
-  //     it('should respond with status 400', done => {
-  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}`)
-  //       .set({Authorization: 'lul this is bad}'})
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(400);
-  //         expect(res.text).to.equal('BadRequestError');
-  //         done();
-  //       });
-  //     });
-  //   });
-  //
-  //   describe('with invalid profileID', function(){
-  //     before(done => residenceMock.call(this, done));
-  //     it('should respond with status 400', done => {
-  //       request.delete(`${url}/api/profile/${this.tempProfile._id}bad/pic/${this.tempResidence._id}`)
-  //       .set({Authorization: `Bearer ${this.tempToken}`})
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(400);
-  //         expect(res.text).to.equal('BadRequestError');
-  //         done();
-  //       });
-  //     });
-  //   });
-  //
-  //   describe('with invalid residenceID', function(){
-  //     before(done => residenceMock.call(this, done));
-  //     it('should respond with status 404', done => {
-  //       request.delete(`${url}/api/profile/${this.tempProfile._id}/pic/${this.tempResidence._id}bad`)
-  //       .set({Authorization: `Bearer ${this.tempToken}`})
-  //       .end((err, res) => {
-  //         expect(res.status).to.equal(404);
-  //         expect(res.text).to.equal('NotFoundError');
-  //         done();
-  //       });
-  //     });
-  //   });
-  // });
+  describe('testing DELETE /api/residence/:resID', function(){
+
+    describe('with valid token and ids', function(){
+      before(done => residenceMock.call(this, done));
+
+      it('should respond with status 204', done => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          console.log('getting back to test file!');
+          if (err) return done(err);
+          expect(res.status).to.equal(204);
+          done();
+        });
+      });
+    });
+    describe('with invalid token', function(){
+      before(done => residenceMock.call(this, done));
+      it('should respond with status 401', done => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}bad`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal('UnauthorizedError');
+          done();
+        });
+      });
+    });
+
+    describe('no auth header', function(){
+      before(done => residenceMock.call(this, done));
+      it('should respond with status 401', done => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal('UnauthorizedError');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid bearer auth', function(){
+      before(done => residenceMock.call(this, done));
+      it('should respond with status 401', done => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}`)
+        .set({Authorization: 'lul this is bad}'})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal('UnauthorizedError');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid residenceID', function(){
+      before(done => residenceMock.call(this, done));
+      it('should respond with status 404', done => {
+        request.delete(`${url}/api/residence/badID`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.text).to.equal('NotFoundError');
+          done();
+        });
+      });
+    });
+  });
 });

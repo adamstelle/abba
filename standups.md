@@ -31,3 +31,28 @@ BUGS (5)
 -
 
 Broader To-Dos
+
+Standup - Morning Tuesday October 11th
+
+Accomplished yesterday
+- Logan: wrote residence tests, debugging, 90% done
+- Sarah: worked with logan on above
+- Adam: 60-70% done on photo routing, photo middleware. Finished bedroom mock. Merged everything, debugged, merge conflicts, got all tests passing, added all routes to server.js
+
+Today
+Logan and Sarah
+- 50% CRUD on estimate-router
+- 100% done with residence tests
+
+Adam
+- Finish all photo routes and tests
+- General cleanup and refactor
+- More tests out of existing routes
+- General application tests
+
+Current status
+- All mocks working
+- at least one CRUD on all routes
+
+TODO:
+-
