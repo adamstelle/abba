@@ -1,14 +1,26 @@
 'use strict';
 
-const mongoose = require('mongoose');
+//npm modules
+const Router = require('express').Router;
+const createError = require('http-errors');
+const debug = require('debug')('abba:residence-router');
 
-const estimateSchema = mongoose.Schema({
-  nightlyEst: {type: Number, required: true},
-  monthlyEst: {type: Number, required: true},
-  occupancyRate: {type: Number, required: true, min: 0, max: 1},
-  userID: {type: mongoose.Schema.Types.ObjectID, required: true},
-  bedroomID: {type: mongoose.Schema.Types.ObjectID, required: true},
-  residenceID: {type: mongoose.Schema.Types.ObjectID, required: true},
+//app modules
+const Estimate = require('../model/estimate.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
+
+const estimateRouter = module.exports = Router();
+
+estimateRouter.get('/api/residence/:resID/bedroom/:bedID/estimate/:id', bearerAuth, function(req, res, next){
+  debug('GET /api/estimate');
+  Estimate.findById(req.params.id)
+  .catch(err => Promise.reject(createError(400, err.message)))
+  .then(estimate => {
+    if( estimate.userID.toString() !== req.user._id.toString())
+      return Promise.reject(createError(401, 'invalid userID'));
+    if( estimate.bedID.toString() !== req.params.bedID.toString())
+      return Promise.reject(createError(400, 'invalid bedroom ID'));
+    res.json(estimate);
+  })
+  .catch(next);
 });
-
-module.exports = mongoose.model('estimate', estimateSchema);
