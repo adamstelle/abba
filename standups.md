@@ -32,7 +32,7 @@ BUGS (5)
 
 Broader To-Dos
 
-Standup - Morning Tuesday October 11th
+## Standup - Morning Tuesday October 11th
 
 Accomplished yesterday
 - Logan: wrote residence tests, debugging, 90% done
@@ -54,5 +54,31 @@ Current status
 - All mocks working
 - at least one CRUD on all routes
 
+## Afternoon Tuesday October 11th
+
+Accomplished
+
+Logan and Sarah
+
+DONE
+- 100% done with residence tests
+- Estimate model, estimate router, estimate-mock
+- Started estimate-tests
 TODO:
--
+- Finish estimate-tests
+- Refactor residence tests with var key in ObjectId
+
+Razi
+
+DONE
+- Bedroom tests - POST and GET
+TODO:
+- Finish bedroom tests - DELETE and PUT
+
+Adam
+
+DONE
+- uploading multiple photos to AWS
+TODO:
+- finishing photos and photo tests
+- set up coveralls for code coverage
