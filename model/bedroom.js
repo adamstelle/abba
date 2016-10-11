@@ -15,10 +15,11 @@ const bedroomSchema = mongoose.Schema({
   bedSize: {type: String, required: true},
   bedType: {type: String, required: true},
   sleepNum: {type: Number, required: true},
-  photoArray: {type: Array, required: true},
+  photoArray: [{type: mongoose.Schema.Types.ObjectId, required: true}],
   privateBath: {type: Boolean, required: true},
-  residenceID: {type: mongoose.Schema.Types.ObjectID, required: true},
-  estimateID: {type: mongoose.Schema.Types.ObjectID, required: true},
+  userID: {type: mongoose.Schema.Types.ObjectId, required: true},
+  residenceID: {type: mongoose.Schema.Types.ObjectId },
+  estimateID: {type: mongoose.Schema.Types.ObjectId},
 });
 
 module.exports = mongoose.model('bedroom', bedroomSchema);

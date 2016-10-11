@@ -12,6 +12,7 @@ const debug = require('debug')('abba:server');
 const errorMiddleware = require('./lib/error-middleware.js');
 const authRouter = require('./route/auth-router.js');
 const profileRouter = require('./route/profile-router.js');
+const bedroomRouter = require('./route/bedroom-router.js');
 
 // load environment vars
 dotenv.load();
@@ -27,7 +28,7 @@ const app = express();
 // app routes
 app.use(authRouter);
 app.use(profileRouter);
-
+app.use(bedroomRouter);
 // app middleware
 app.use(cors());
 app.use(errorMiddleware);
