@@ -2,6 +2,7 @@
 
 const Router = require('express').Router;
 const createError = require('http-errors');
+const Bedroom = require('../model/bedroom.js');
 const jsonParser = require('body-parser').json();
 
 const debug = require('debug')('abba:bedroom-router');
@@ -13,11 +14,15 @@ const bedroomRouter = module.exports = Router();
 
 bedroomRouter.post('/api/residence/:resID/bedroom', bearerAuth, jsonParser, function(req, res, next) {
   debug('POST /api/residence/:resID/bedroom');
-  
   req.body.userID = req.user._id;
-  Residence.findByIdAndAddBedroom(req.params.resID, req.body)
+  req.body.residenceID = req.params.resID;
+  new Bedroom(req.body).save()
   .then(bedroom => {
-    req.json(bedroom);
+    Residence.findByIdAndAddBedroom(req.params.resID, bedroom)
+    .then(residence => {
+      req.residence = residence;
+      res.json(bedroom);
+    });
   })
   .catch(next);
 });

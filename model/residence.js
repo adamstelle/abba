@@ -26,16 +26,7 @@ Residence.findByIdAndAddBedroom = function(id, bedroom) {
   return Residence.findById(id)
     .catch(err => Promise.reject(createError(404, err.message)))
     .then(residence => {
-      bedroom.residenceID = residence._id;
-      this.tempResidence = residence;
-      return new Bedroom(bedroom).save();
-    })
-    .then( bed => {
-      this.tempResidence.bedrooms.push(bed._id);
-      this.tempBedroom = bed;
-      return this.tempResidence.save();
-    })
-    .then(() => {
-      return this.tempBedroom;
+      residence.bedrooms.push(bedroom._id);
+      return residence.save();
     });
 };
