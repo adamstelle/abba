@@ -9,9 +9,11 @@ const mongoose = require('mongoose');
 const debug = require('debug')('abba:server');
 
 // app modules
-const errorMiddleware = require('./lib/error-middleware.js');
 const authRouter = require('./route/auth-router.js');
 const profileRouter = require('./route/profile-router.js');
+// const bedroomRouter = require('./router/bedroom-router.js');
+const errorMiddleware = require('./lib/error-middleware.js');
+// const residenceRouter = require('./router/residence-router.js');
 
 // load environment vars
 dotenv.load();
@@ -27,6 +29,8 @@ const app = express();
 // app routes
 app.use(authRouter);
 app.use(profileRouter);
+// app.use(residenceRouter);
+// app.use(bedroomRouter);
 
 // app middleware
 app.use(cors());

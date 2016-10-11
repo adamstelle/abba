@@ -5,7 +5,7 @@ const debug = require('debug')('abba:profile-mock');
 // app modules
 const Profile = require('../../model/profile.js');
 const userMock = require('./user-mock.js');
-const lorem = require('lorem-ipsum'); 
+const lorem = require('lorem-ipsum');
 
 module.exports = function(done){
   debug('creating mock profile');

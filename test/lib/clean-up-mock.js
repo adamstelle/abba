@@ -10,8 +10,8 @@ module.exports = function(done) {
   debug('cleaning up database');
   Promise.all([
     User.remove({}),
-    Photo.remove({}),
     Profile.remove({}),
+    Photo.remove({}),
   ])
   .then(() => done())
   .catch(done);

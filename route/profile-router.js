@@ -27,14 +27,18 @@ profileRouter.post('/api/profile', jsonParser, bearerAuth,  function(req, res, n
 
 profileRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.single('image'), photoMiddleware.photoUpload, function(req, res, next) {
   debug('POST /api/profile/:profID/photo');
-  next();
+  Profile.findByIdAndAddPhoto(req.params.profID, res.photo)
+  .then(() => res.json(res.photo))
+  .catch(next);
 });
 
 profileRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
   debug('DELETE /api/profile/:profID/photo/:id');
-  req.body.userID = req.user._id;
-  res.json(res.photo);
-  next();
+  // console.log('req params profid', req.params.profID);
+  console.log('photo is ', req.photo);
+  Profile.findByIdAndRemovePhoto(req.params.profID, req.photo)
+  .then(() => res.sendStatus(204))
+  .catch(next);
 });
 
 profileRouter.get('/api/profile/:id', bearerAuth, function(req, res, next) {
