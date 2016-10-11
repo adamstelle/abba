@@ -9,20 +9,21 @@ const upload = multer({dest: `${__dirname}/../data`});
 
 // app
 const Profile = require('../model/profile.js');
+const Bedroom = require('../model/bedroom.js');
 const photoMiddleware = require('../lib/photo-aws-middleware.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 // constants
 const photoRouter = module.exports = Router();
 
-photoRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.single('image'), photoMiddleware.photoUpload, function(req, res, next) {
+photoRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.single('image'), photoMiddleware.profilePhotoUpload, function(req, res, next) {
   debug('POST /api/profile/:profID/photo');
   Profile.findByIdAndAddPhoto(req.params.profID, res.photo)
   .then(() => res.json(res.photo))
   .catch(next);
 });
 
-photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
+photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.profilePhotoDelete, function(req, res, next) {
   debug('DELETE /api/profile/:profID/photo/:id');
   Profile.findByIdAndRemovePhoto(req.params.profID, req.photo)
   .then(() => res.sendStatus(204))
@@ -30,3 +31,10 @@ photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware
 });
 
 // TO DO: Add photo routes for BEDROOM
+
+photoRouter.post('/api/bedroom/:bedroomID/photo', jsonParser, bearerAuth, upload.array('image'), photoMiddleware.bedroomPhotoUpload, function(req, res, next) {
+  debug('POST /api/bedroom/:bedroomID/photo');
+  Bedroom.findByIdAndAddPhotos(req.params.bedroomID, req.photo)
+  .then(() => res.json(res.photo))
+  .catch(next);
+});

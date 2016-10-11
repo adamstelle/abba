@@ -1,5 +1,5 @@
 'use strict';
-const debug = require('debug')('abba:residence-mock');
+const debug = require('debug')('abba:bedroom-mock');
 
 const Bedroom = require('../../model/bedroom.js');
 const residenceMock = require('./residence-mock.js');
@@ -21,7 +21,7 @@ module.exports = function(done){
     exampleBedroom.userID = this.tempUser._id.toString();
     new Bedroom(exampleBedroom).save()
     .then(bedroom => {
-      this.tempbedroom = bedroom;
+      this.tempBedroom = bedroom;
       done();
     })
     .catch(done);
