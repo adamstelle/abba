@@ -44,7 +44,10 @@ profileRouter.delete('/api/profile/:id', bearerAuth, function(req, res, next){
       return next(createError(401, 'invalid userid'));
     return Profile.findByIdAndRemove(profile._id);
   })
-  .then(next(res.status(204).send()))
+  .catch(err => {
+    return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
+  })
+  .then(() => res.status(204).send())
   .catch(next);
 });
 
