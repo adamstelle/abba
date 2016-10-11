@@ -10,6 +10,8 @@ const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 const Residence = require('../model/residence.js');
 
+const bedroomMock = require('./lib/bedroom-mock.js');
+const userMock = require('./lib/user-mock.js');
 const residenceMock = require('./lib/residence-mock.js');
 const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
@@ -53,88 +55,135 @@ describe('testing bedroom router', function() {
       });
     });
 
-    // describe('with invalid body', function() {
-    //   before(done => mockUser.call(this, done));
-    //   before(done => residenceMock.call(this, done));
-    //   after(done => {
-    //     cleanUpDatabase();
-    //     done();
-    //   });
-    //   it('should return a 400 bad request', (done) => {
-    //     request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
-    //     .send('asdf')
-    //     .set('Character-Type', 'application/json')
-    //     .set({Authorization: `Bearer ${this.tempToken._id}/bedroom`})
-    //     .end((err, res) => {
-    //       expect(res.status).to.equal(400);
-    //       done();
-    //     });
-    //   }); //end of it should return a 400 bad request
-    // }); //end of describe with invalid body
+    describe('with invalid body', function() {
+      before(done => residenceMock.call(this, done));
 
-    // describe('with missing body', function() {
-    //   before(done => mockUser.call(this, done));
-    //   before(done => residenceMock.call(this, done));
-    //   after(done => {
-    //     cleanUpDatabase();
-    //     done();
-    //   });
-    //   it('should return a 400 bad request', (done) => {
-    //     request.post(`${url}/api/residence/${this.tempResidence._id}`)
-    //     .send({})
-    //     .set('Character-Type', 'application/json')
-    //     .set({Authorization: `Bearer ${this.tempToken._id}/bedroom`})
-    //     .end((err, res) => {
-    //       expect(res.status).to.equal(400);
-    //       done();
-    //     });
-    //   }); //end of it should return 400 bad request
-    // }); //end of describe with missing body
+      it('should return a 400 bad request', (done) => {
+        request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
+        .send({name:'abba', family:'team'})
+        .set('Content-Type', 'application/json')
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err).to.not.be.null;
+          done();
+        });
+      }); 
+    }); 
 
-    // describe('with invalid token', function() {
-    //   before(done => mockUser.call(this, done));
-    //   before(done => residenceMock.call(this, done));
-    //   after(done => {
-    //     cleanUpDatabase();
-    //     done();
-    //   });
-    //   it('should return a 401 not authorized', (done) => {
-    //     request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
-    //     .send(exampleBedroom)
-    //     .set({Authorization: `Bearer ${this.tempToken}bad`})
-    //     .end((err, res) => {
-    //       expect(res.status).to.equal(401);
-    //       done();
-    //     });
-    //   });
-    // }); //end of describe with invalid token
-    // describe('with invalid residence id', function() {
-    //   before(done => mockUser.call(this, done));
-    //   before(done => residenceMock.call(this, done));
-    //   after(done => {
-    //     cleanUpDatabase();
-    //     done();
-    //   });
-    //   it('should return a 404 not found', (done) => {
-    //     request.post(`${url}/api/residence/1234/bedroom`)
-    //     .send(exampleBedroom)
-    //     .set({Authorization: `Bearer ${this.tempToken._id}/bedroom`})
-    //     .end((err, res) => {
-    //       expect(res.status).to.equal(404);
-    //       done();
-    //     });
-    //   });
-    // });
+    describe('with missing body', function() {
+      before(done => residenceMock.call(this, done));
+
+      it('should return a 400 bad request', (done) => {
+        request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
+        .send({})
+        .set('Content-Type', 'application/json')
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err).to.not.be.null;
+          done();
+        });
+      }); 
+    }); 
+
+    describe('with invalid token', function() {
+      before(done => residenceMock.call(this, done));
+
+      it('should return a 401 not authorized', (done) => {
+        request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
+        .send(exampleBedroom)
+        .set({Authorization: `Bearer ${this.tempToken + '1'}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    }); 
+
+    describe('with invalid residence id', function() {
+      before(done => userMock.call(this, done));
+      before(done => residenceMock.call(this, done));
+
+      it('should return a 404 not found', (done) => {
+        request.post(`${url}/api/residence/${7787755}/bedroom`)
+        .send(exampleBedroom)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
   });
 
-  // describe('testing GET requests to /api/residence/:resID/bedroom', function() {
-  //   describe('with valid residence Ud', function() {
-  //     before(done => residenceMock.call(this, done));
-  //     it('should return a bedroom', (done) => {
+  describe('testing GET requests to /api/residence/:resID/bedroom', function() {
+    describe('with valid residence and bedroom id', function() {
+      before(done => bedroomMock.call(this, done));
 
-  //     });
+      it('should return a bedroom', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(err).to.be.null;
+          done();
+        });
+      });
+    });
 
-  //   });
+    describe('with Invalid bedroom_id', function() {
+      before(done => bedroomMock.call(this, done));
 
-  // });
+      it('should return a 404 error', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${112233}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid Token', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return a 401 error', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken + ' '}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.body).to.not.have.property('type');
+          expect(res.body).to.not.have.property('bedSize');
+          expect(res.body).to.not.have.property('bedType');
+          expect(res.body).to.not.have.property('sleepNum');
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid residence_Id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return a 404 error', (done) => {
+        request.get(`${url}/api/residence/${666565}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          Residence.findById(666565)
+          .then(() => {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+          })
+          .catch((err) =>{
+            expect(err).to.not.be.null;
+            expect(res.status).to.equal(400);
+          });
+          done();
+        });
+      });
+    });
+  });
 });
