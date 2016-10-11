@@ -304,7 +304,7 @@ describe('testing residence routes', function() {
       it('should return a 401 with bad token', done => {
         request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
         .set({
-          Authorization: `Bearer ${this.tempToken}bad`,
+          Authorization: 'Bearer ',
         })
         .end((err, res) => {
           expect(res.status).to.equal(401);
