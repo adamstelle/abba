@@ -34,10 +34,7 @@ describe('testing profile routes', function() {
   describe('testing POST api/profile', () => {
     describe('testing with valid body', () => {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
+      afterEach(done => cleanUpDatabase(done));
       it('expect to return res status eqaul to 200', done => {
         request.post(`${url}/api/profile`)
         .send(exampleProfileData)
@@ -56,10 +53,6 @@ describe('testing profile routes', function() {
 
     describe('testing with Invalid body', () => {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('expect to return res status eqaul to 400', done => {
         request.post(`${url}/api/profile`)
         .send({name:'Abba Team'})
@@ -76,10 +69,6 @@ describe('testing profile routes', function() {
 
     describe('testing with Invalid Token', () => {
       before(done => userMock.call(this, done));
-      after(done => {
-        cleanUpDatabase();
-        done();
-      });
       it('expect to return res status eqaul to 400', done => {
         request.post(`${url}/api/profile`)
         .send(exampleProfileData)

@@ -12,8 +12,8 @@ const debug = require('debug')('abba:server');
 
 // app modules
 const authRouter = require('./route/auth-router.js');
+const bedroomRouter = require('./route/bedroom-router.js');
 const profileRouter = require('./route/profile-router.js');
-// const bedroomRouter = require('./router/bedroom-router.js');
 const errorMiddleware = require('./lib/error-middleware.js');
 const residenceRouter = require('./route/residence-router.js');
 
@@ -33,7 +33,7 @@ app.use(morgan('dev'));
 app.use(authRouter);
 app.use(profileRouter);
 app.use(residenceRouter);
-// app.use(bedroomRouter);
+app.use(bedroomRouter);
 
 // app middleware
 app.use(cors());
@@ -43,6 +43,5 @@ app.use(errorMiddleware);
 const server = module.exports = app.listen(PORT, () => {
   debug(`server up on ${PORT}`);
 });
-
 
 server.isRunning = true;
