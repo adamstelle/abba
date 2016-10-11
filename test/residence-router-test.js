@@ -316,12 +316,12 @@ describe('testing residence routes', function() {
 
     describe('with invalid Bearer auth', function(){
       before(done => residenceMock.call(this, done));
-      it('should return a 400 error with invalid Bearer', done => {
+      it('should return a 401 error with invalid Bearer', done => {
         request.get(`${url}/api/profile/${this.tempProfile._id}/residence/${this.tempResidence._id}`)
         .set({ Authorization: 'bad request' })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal('UnauthorizedError');
           done();
         });
       });
@@ -329,7 +329,7 @@ describe('testing residence routes', function() {
 
     describe('with no Authorization header', function(){
       before(done => residenceMock.call(this, done));
-      it('should return a 400 error with no Authorization', done => {
+      it('should return a 400 error with no Authorization header', done => {
         request.get(`${url}/api/profile/${this.tempGallery._id}`)
         .end((err, res) => {
           expect(res.status).to.equal(400);
