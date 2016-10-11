@@ -30,11 +30,10 @@ let exampleProfileData = {
 describe('testing profile routes', function() {
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
-
+  afterEach(done => cleanUpDatabase(done));
   describe('testing POST api/profile', () => {
     describe('testing with valid body', () => {
       before(done => userMock.call(this, done));
-      afterEach(done => cleanUpDatabase(done));
       it('expect to return res status eqaul to 200', done => {
         request.post(`${url}/api/profile`)
         .send(exampleProfileData)

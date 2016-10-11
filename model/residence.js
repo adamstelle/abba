@@ -3,7 +3,6 @@
 const mongoose = require('mongoose');
 const debug = require('debug')('abba:residence');
 const createError = require('http-errors');
-const Bedroom = require('../model/bedroom.js');
 
 const residenceSchema = mongoose.Schema({
   dateBuilt: {type: Date},

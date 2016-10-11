@@ -1,7 +1,6 @@
 'use strict';
 
 const Router = require('express').Router;
-const createError = require('http-errors');
 const Bedroom = require('../model/bedroom.js');
 const jsonParser = require('body-parser').json();
 
