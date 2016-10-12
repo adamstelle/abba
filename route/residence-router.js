@@ -36,10 +36,10 @@ residenceRouter.get('/api/residence/:resID', bearerAuth, function(req, res, next
   .catch(next);
 });
 
-residenceRouter.delete('/api/residence/:resID', bearerAuth, function(req, res, next) {
-  debug('DELETE /api/residence/:resID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+residenceRouter.delete('/api/residence/:id', bearerAuth, function(req, res, next) {
+  debug('DELETE /api/residence/:id');
 
-  Residence.findById(req.params.resID)
+  Residence.findById(req.params.id)
   .catch(err =>  Promise.reject(createError(404, err.message)))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())

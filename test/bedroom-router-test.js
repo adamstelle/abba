@@ -239,15 +239,14 @@ describe('testing bedroom router', function() {
         request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
-          Bedroom.findById(this.tempBedroom._id)
-          .catch(err => {
-            expect(res.status).to.equal(204);
-            expect(err).to.be.null;
-            done();
-          });
+          if(err) return done(err);
+          expect(res.status).to.equal(204);
+          expect(err).to.be.null;
+          done();
         });
       });
     });
+  });
 
     // describe('with valid beroom Id', function() {
     //   before(done => residenceMock.call(this, done));
@@ -272,7 +271,7 @@ describe('testing bedroom router', function() {
     //   });
     // });
 
-    describe('with Invalid bedroom id', function() {
+  describe('with Invalid bedroom id', function() {
       before(done => bedroomMock.call(this, done));
 
       it('should return an 404 error', (done) => {
@@ -287,7 +286,7 @@ describe('testing bedroom router', function() {
       });
     });
 
-    describe('with Invalid Token', function() {
+  describe('with Invalid Token', function() {
       before(done => bedroomMock.call(this, done));
       
       it('should return an 401 error', (done) => {
@@ -302,7 +301,7 @@ describe('testing bedroom router', function() {
       });
     });
 
-    describe('with Invalid residence_Id', function() {
+  describe('with Invalid residence_Id', function() {
       before(done => bedroomMock.call(this, done));
 
       it('should return a 404 error', (done) => {
@@ -322,7 +321,7 @@ describe('testing bedroom router', function() {
         });
       });
     });
-  });
+
 
   describe('testing PUT requests to /api/residence/:resID/bedroom', function() {
     let updatedBedroom = {

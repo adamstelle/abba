@@ -1,7 +1,6 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Bedroom = require('./bedroom.js');
 const Estimate = require('./estimate.js');
 const Photo = require('./photo.js');
 const createError = require('http-errors');
@@ -19,26 +18,25 @@ const bedroomSchema = mongoose.Schema({
   estimateID: {type: mongoose.Schema.Types.ObjectId},
 });
 
-module.exports = mongoose.model('bedroom', bedroomSchema);
+const Bedroom = module.exports = mongoose.model('bedroom', bedroomSchema);
 
 Bedroom.removeBedroom = function(bedroomID) {
   debug('Bedroom: removeBedroom');
-
+  let tempBed = null;
   return Bedroom.findById(bedroomID)
     .catch(err => Promise.reject(createError(404, err.message)))
     .then(bed => {
+      tempBed = bed;  
+      return Estimate.remove({bedID: bedroomID});
+    })
+    .then(() =>{
       let removeChildren = [];
-      if(bed.estimateID.length){
-        removeChildren.push(Estimate.remove({bedID: bed._id}));
-      }
-      if(bed.photoArray.length){
-        bed.photoArray.forEach(photoId => {
-          removeChildren.push(Photo.remove({_id: photoId}));
-        });
-      }
+      tempBed.photoArray.forEach( photo => {
+        removeChildren.push(Photo.findByIdAndRemove(photo._id));
+      });
       return Promise.all(removeChildren);
     })
     .then(() => {
-      return Bedroom.remove({_id: bedroomID});
+      return Bedroom.findByIdAndRemove(bedroomID);
     });
 };

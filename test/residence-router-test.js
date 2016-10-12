@@ -426,7 +426,6 @@ describe('testing residence routes', function() {
     describe('with valid residenceID', function(){
       before(done => residenceMock.call(this, done));
       it('should remove all dependinces', done => {
-              console.log(this.tempResidence);
 
         request.delete(`${url}/api/residence/${this.tempResidence._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})

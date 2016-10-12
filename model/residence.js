@@ -52,11 +52,6 @@ Residence.findByIdAndRemoveBedroom = function(resId, bedId) {
 Residence.findByIdAndRemoveResidence = function(residenceID) {
   debug('Residence: findByIdAndRemoveResidence');
 
-  // start Promise chanin: find residence
-  // catch: if not found 404
-  // then: delete photos and status for each bedroom in the residence
-  // then: delete the bedrooms for the residence
-  // then: delete the residence
   return Residence.findById(residenceID)
     .catch(err => Promise.reject(createError(404, err.message)))
     .then(residence => {
