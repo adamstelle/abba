@@ -165,17 +165,17 @@ describe('testing profile routes', function() {
     });
 
     describe('testing with Invalid profile_id', () => {
-      // it('expect to return error for deleting profile with invalid id', done => {
-      //   request.delete(`${url}/api/profile/${88000}`)
-      //   .set({
-      //     Authorization: `Bearer ${this.tempToken}`,
-      //   })
-      //   .end((err, res) => {
-      //     expect(res.status).to.equal(404);
-      //     expect(err).to.not.be.null;
-      //     done();
-      //   });
-      // });
+      it('expect to return error for deleting profile with invalid id', done => {
+        request.delete(`${url}/api/profile/badID`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
     });
   });
 
@@ -247,10 +247,10 @@ describe('testing profile routes', function() {
 
       it('should return a error for updating with Invalid id / body', done => {
         request.put(`${url}/api/profile/${10099}`)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`,
-            'Content-Type':'application/json',
-          })
+        .set('Content-Type','application/json')
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
           .send({name:'abba Team'})
           .end((err) => {
             expect(err).not.be.null;

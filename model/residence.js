@@ -29,3 +29,18 @@ Residence.findByIdAndAddBedroom = function(id, bedroom) {
       return residence.save();
     });
 };
+
+Residence.findByIdAndRemoveBedroom = function(resId, bedId) {
+  debug('Residence: findByIdAndRemoveBedroom');
+
+  return Residence.findById(resId)
+    .catch(err => Promise.reject(createError(404, err.message)))
+    .then(residence => {
+      if(residence.bedrooms.length) {
+        residence.bedrooms.pull({_id:bedId});
+        //let index = residence.bedrooms.indexOf(bedId);
+        //residence.bedrooms.splice(index,1);
+        return residence.save();
+      }
+    });
+};

@@ -347,7 +347,6 @@ describe('testing residence routes', function() {
           Authorization: `Bearer ${this.tempToken}`,
         })
         .end((err, res) => {
-          //were actually getting a 404
           expect(res.status).to.equal(400);
           expect(res.text).to.equal('BadRequestError');
           done();

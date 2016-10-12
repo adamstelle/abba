@@ -93,7 +93,7 @@ describe('testing bedroom router', function() {
       it('should return a 401 not authorized', (done) => {
         request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
         .send(exampleBedroom)
-        .set({Authorization: `Bearer ${this.tempToken + '1'}`})
+        .set({Authorization: `Bearer ${this.tempToken + ' '}`})
         .end((err, res) => {
           expect(res.status).to.equal(401);
           expect(err).to.not.be.null;
@@ -128,6 +128,9 @@ describe('testing bedroom router', function() {
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(err).to.be.null;
+          for (var i in this.tempBedroom) {
+            expect(res.body).hasOwnProperty(i);
+          }
           done();
         });
       });
@@ -141,6 +144,7 @@ describe('testing bedroom router', function() {
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
           expect(res.status).to.equal(404);
+          expect(res.body).not.have.property('type');
           expect(err).to.not.be.null;
           done();
         });
@@ -183,6 +187,179 @@ describe('testing bedroom router', function() {
           });
           done();
         });
+      });
+    });
+  });
+
+  describe('testing DELETE requests to /api/residence/:resID/bedroom', function() {
+    describe('with valid bedroom id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should delete a bedroom', (done) => {
+        console.log('this.tempBedroom._id',this.tempBedroom._id);
+        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(204);
+          expect(err).to.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid bedroom id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return an 404 error', (done) => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/999`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.text).to.equal('NotFoundError');
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid Token', function() {
+      before(done => bedroomMock.call(this, done));
+      
+      it('should return an 401 error', (done) => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken + ' '}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal('UnauthorizedError');
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid residence_Id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return a 404 error', (done) => {
+        request.delete(`${url}/api/residence/${112992}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          Residence.findById(112992)
+          .then(() => {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(204);
+          })
+          .catch((err) =>{
+            expect(err).to.not.be.null;
+            expect(res.status).to.equal(404);
+          });
+          done();
+        });
+      });
+    });
+  });
+
+  describe('testing PUT requests to /api/residence/:resID/bedroom', function() {
+    let updatedBedroom = {
+      sleepNum: 5,
+      privateBath: false,
+    };
+
+    describe('with valid bedroom id / body', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should update a bedroom with valid id / body', done => {
+        request.put(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+          .set({
+            Authorization: `Bearer ${this.tempToken}`,
+          })
+          .send(updatedBedroom)
+          .end((err, res) => {
+            if(err) done(err);
+            expect(res.status).to.equal(200);
+            expect(res.body.sleepNum).to.equal(5);
+            expect(res.body.privateBath).to.be.false;
+            for (var i in updatedBedroom) {
+              expect(res.body).hasOwnProperty(i);
+            }
+            expect(err).to.be.null;
+            done();
+          });
+      });
+    });
+
+    describe('with Invalid body', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return 400 error', done => {
+        request.put(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+          .set('Content-Type','application/json')
+          .set({
+            Authorization: `Bearer ${this.tempToken}`,
+          })
+          .send('/')
+          .end((err, res) => {
+            expect(res.status).to.equal(400);
+            expect(res.body).not.have.property('sleepNum');
+            expect(res.body).not.have.property('privateBath');
+            expect(err).to.not.be.null;
+            done();
+          });
+      });
+    });
+
+    describe('with Invalid bedroom id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return 404 error', done => {
+        request.put(`${url}/api/residence/${this.tempResidence._id}/bedroom/${77787}`)
+          .set({
+            Authorization: `Bearer ${this.tempToken}`,
+          })
+          .send(updatedBedroom)
+          .end((err, res) => {
+            expect(res.status).to.equal(404);
+            expect(err).to.not.be.null;
+            done();
+          });
+      });
+    });
+
+    describe('with Invalid residence_id', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return a 404 error', (done) => {
+        request.put(`${url}/api/residence/${112992}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          Residence.findById(112992)
+          .then(() => {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+          })
+          .catch((err) =>{
+            expect(err).to.not.be.null;
+            expect(res.status).to.equal(404);
+          });
+          done();
+        });
+      });
+    });
+
+    describe('with Invalid Token', function() {
+      before(done => bedroomMock.call(this, done));
+
+      it('should return 404 error', done => {
+        request.put(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+          .set({
+            Authorization: `Bearer ${this.tempToken + ' '}`,
+          })
+          .send(updatedBedroom)
+          .end((err, res) => {
+            expect(res.status).to.equal(401);
+            expect(err).to.not.be.null;
+            done();
+          });
       });
     });
   });
