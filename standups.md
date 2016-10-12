@@ -64,21 +64,43 @@ DONE
 - 100% done with residence tests
 - Estimate model, estimate router, estimate-mock
 - Started estimate-tests
-TODO:
 - Finish estimate-tests
+
+TODO:
 - Refactor residence tests with var key in ObjectId
 
 Razi
 
 DONE
-- Bedroom tests - POST and GET
-TODO:
-- Finish bedroom tests - DELETE and PUT
+- Bedroom Routes and tests - POST / GET / PUT / DELETE
+
 
 Adam
 
 DONE
 - uploading multiple photos to AWS
-TODO:
-- finishing photos and photo tests
+- photo routing is finished
 - set up coveralls for code coverage
+
+TODO:
+- photo tests
+
+
+
+
+
+Goals for morning:
+-  by deleting a residence remove all bedrooms
+-  by deleting bedroom remove all photos and estimate
+-  add populate to all model static methods 
+-  check for if user adding or defining residence with same authorization / check if user is associate with resource
+-  refactoring all tests
+
+- afternoon : 
+  - scratch Goals
+  - pagination
+  - validation on user inputs 
+    - residence
+    - bedroom
+  - using google API for validation address / auto Complete
+  - 
