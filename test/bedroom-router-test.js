@@ -35,7 +35,7 @@ describe('testing bedroom router', function() {
   describe('testing POST /api/residence/:resID/bedroom ', function() {
     describe('with valid body', function() {
       beforeEach(done => residenceMock.call(this, done));
-      afterEach(done => cleanUpDatabase(done));
+
       it('should return a bedroom', (done) => {
         request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
         .send(exampleBedroom)
@@ -54,6 +54,31 @@ describe('testing bedroom router', function() {
         });
       });
     });
+
+    describe('with valid body', function() {
+      beforeEach(done => residenceMock.call(this, done));
+
+      it('should return 200 if bedroom_id is added to Resedence bedrooms array otherwise return 404', (done) => {
+        request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
+        .send(exampleBedroom)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          Residence.findById(this.tempResidence._id)
+          .then(residence => {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body._id).to.be.oneOf(residence.bedrooms); 
+          })
+          .catch(err => {
+            expect(err).to.not.be.null;
+            expect(res.status).to.equal(404);
+          });
+          done();
+        });
+      });
+    });
+
+
 
     describe('with invalid body', function() {
       before(done => residenceMock.call(this, done));
@@ -196,7 +221,6 @@ describe('testing bedroom router', function() {
       before(done => bedroomMock.call(this, done));
 
       it('should delete a bedroom', (done) => {
-        console.log('this.tempBedroom._id',this.tempBedroom._id);
         request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
