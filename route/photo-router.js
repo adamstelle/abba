@@ -23,12 +23,6 @@ photoRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.si
   .catch(next);
 });
 
-photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
-  debug('DELETE /api/profile/:profID/photo/:id');
-  Profile.findByIdAndRemovePhoto(req.params.profID, req.photo)
-  .then(() => res.sendStatus(204))
-  .catch(next);
-});
 
 photoRouter.post('/api/bedroom/:bedroomID/photo', jsonParser, bearerAuth, upload.array('image'), photoMiddleware.bedroomPhotoUpload, function(req, res, next) {
   debug('POST /api/bedroom/:bedroomID/photo');
@@ -37,9 +31,16 @@ photoRouter.post('/api/bedroom/:bedroomID/photo', jsonParser, bearerAuth, upload
   .catch(next);
 });
 
+photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
+  debug('DELETE /api/profile/:profID/photo/:id');
+  Profile.findByIdAndRemovePhoto(req.params.profID, req.photo)
+  .then(() => res.sendStatus(204))
+  .catch(next);
+});
+
 photoRouter.delete('/api/bedroom/:bedroomID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
   debug('DELETE /api/bedroom/:bedroomID/photo/:id');
-  Bedroom.findByIdAndRemovePhoto(req.params.bedroomID, req.params.id)
+  Bedroom.findByIdAndRemovePhoto(req.params.bedroomID, req.photo)
   .then(() => res.sendStatus(204))
   .catch(next);
 });

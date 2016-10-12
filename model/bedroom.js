@@ -34,16 +34,15 @@ Bedroom.findByIdAndAddPhotos = function(id, photos){
   });
 };
 
-Bedroom.findByIdAndRemovePhoto = function(id, photoID){
+Bedroom.findByIdAndRemovePhoto = function(id, photo){
   debug('findByIdAndRemovePhoto');
-  return Photo.findById(photoID).remove()
+  return Photo.findById(photo._id).remove()
   .catch(err => Promise.reject(createError(404, err.message)))
   .then(() => {
     return Bedroom.findById(id);
   })
   .then(bedroom => {
-    console.log('bedroom', bedroom);
-    bedroom.photos.pull({id:photoID});
+    bedroom.photos.pull({_id:photo._id});
     return bedroom.save();
   });
 };
