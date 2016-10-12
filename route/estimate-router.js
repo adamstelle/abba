@@ -17,10 +17,10 @@ estimateRouter.get('/api/residence/:resID/bedroom/:bedID/estimate/:id', bearerAu
   .catch(err => Promise.reject(createError(400, err.message)))
   .then(estimate => {
     if( estimate.userID.toString() !== req.user._id.toString())
-      return Promise.reject(createError(401, 'invalid userID'));
+      return next(createError(401, 'invalid userID'));
     if( estimate.bedID.toString() !== req.params.bedID.toString())
-      return Promise.reject(createError(400, 'invalid bedroom ID'));
+      return next(createError(404, 'invalid bedroom ID'));
     res.json(estimate);
   })
-  .catch(next);
+  .catch(err => next(createError(404, err.message)));
 });
