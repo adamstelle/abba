@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const debug = require('debug')('abba:residence');
 const createError = require('http-errors');
 
+const Estimate = require('./estimate.js');
+const Bedroom = require('./bedroom.js');
+const Photo = require('./photo.js');
+
 const residenceSchema = mongoose.Schema({
   dateBuilt: {type: Date},
   sqft: {type: String, required: true},
@@ -44,3 +48,32 @@ Residence.findByIdAndRemoveBedroom = function(resId, bedId) {
       }
     });
 };
+
+Residence.findByIdAndRemoveResidence = function(residenceID) {
+  debug('Residence: findByIdAndRemoveResidence');
+
+  // start Promise chanin: find residence
+  // catch: if not found 404
+  // then: delete photos and status for each bedroom in the residence
+  // then: delete the bedrooms for the residence
+  // then: delete the residence
+  return Residence.findById(residenceID)
+    .catch(err => Promise.reject(createError(404, err.message)))
+    .then(residence => {
+      let removeChildren= [];
+      residence.bedrooms.forEach(bed => {
+        removeChildren.push(Estimate.remove({bedID: bed._id}));
+        bed.photoArray.forEach( photoId => {
+          removeChildren.push(Photo.remove({_id: photoId}));
+        });
+      });
+      return Promise.all(removeChildren);
+    })
+    .then(() => {
+      return Bedroom.remove({residenceID: residenceID});
+    })
+      .then(() => {
+        return Residence.findByIdAndRemove(residenceID);
+      });
+};
+

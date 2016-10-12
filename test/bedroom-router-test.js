@@ -9,6 +9,7 @@ const expect = require('chai').expect;
 const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 const Residence = require('../model/residence.js');
+const Bedroom = require('../model/bedroom.js');
 
 const bedroomMock = require('./lib/bedroom-mock.js');
 const userMock = require('./lib/user-mock.js');
@@ -231,16 +232,19 @@ describe('testing bedroom router', function() {
   });
 
   describe('testing DELETE requests to /api/residence/:resID/bedroom', function() {
-    describe('with valid bedroom id', function() {
+    describe('with valid BedroomId', function(){
       before(done => bedroomMock.call(this, done));
-
-      it('should delete a bedroom', (done) => {
+      
+      it('should remove all dependinces {photos and estimate}', done => {
         request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
-          expect(res.status).to.equal(204);
-          expect(err).to.be.null;
-          done();
+          Bedroom.findById(this.tempBedroom._id)
+          .catch(err => {
+            expect(res.status).to.equal(204);
+            expect(err).to.be.null;
+            done();
+          });
         });
       });
     });

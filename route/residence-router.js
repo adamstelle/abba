@@ -40,13 +40,14 @@ residenceRouter.delete('/api/residence/:resID', bearerAuth, function(req, res, n
   debug('DELETE /api/residence/:resID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
   Residence.findById(req.params.resID)
+  .catch(err =>  Promise.reject(createError(404, err.message)))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
       return Promise.reject(createError(401, 'invalid userID'));
-    return Residence.findByIdAndRemove(residence._id);
+    return Residence.findByIdAndRemoveResidence(residence._id);
   })
   .catch(err => {
-    return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
+    return Promise.reject(err.status ? err : createError(404, err.message));
   })
   .then(() => res.status(204).send())
   .catch(next);
