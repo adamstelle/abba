@@ -1,6 +1,6 @@
 'use strict';
 // npm modules
-const debug = require('debug')('abba:photo-mock');
+const debug = require('debug')('abba:profile-photo-mock');
 
 // app modules
 const Photo = require('../../model/photo.js');

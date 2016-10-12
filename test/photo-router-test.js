@@ -9,9 +9,10 @@ const request = require('superagent');
 const server = require('../server.js');
 const Profile = require('../model/profile.js');
 const Bedroom = require('../model/bedroom.js');
-const photoMock = require('./lib/photo-mock.js');
 const profileMock = require('./lib/profile-mock.js');
 const bedroomMock = require('./lib/bedroom-mock.js');
+const profilePhotoMock = require('./lib/profile-photo-mock.js');
+const bedroomPhotoMock = require('./lib/bedroom-photo-mock.js');
 const serverControl = require('./lib/server-control.js');
 const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
@@ -64,7 +65,7 @@ describe('testing photo middleware', function(){
   });
   describe('testing DELETE /api/profile/:profileID/photo/:id', () => {
     describe('testing with valid auth and ID', () => {
-      beforeEach(done => photoMock.call(this, done));
+      beforeEach(done => profilePhotoMock.call(this, done));
       it('should return a 204', done => {
         request.delete(`localhost:3000/api/profile/${this.tempProfile._id}/photo/${this.tempPhoto._id}`)
         .set({
@@ -113,6 +114,33 @@ describe('testing photo middleware', function(){
             expect(res.body[0].caption).to.equal(examplePhoto.caption);
             done();
           });
+        })
+        .catch(done);
+      });
+    });
+  });
+  describe('testing DELETE /api/bedroom/:bedroomID/photo/:id', () => {
+    describe('testing with valid auth and ID', () => {
+      beforeEach(done => bedroomPhotoMock.call(this, done));
+      it('should return a 204', done => {
+        request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .then(res => {
+          expect(res.status).to.equal(204);
+          done();
+        })
+        .catch(done);
+      });
+      it('should remove the photo from the bedroom', done => {
+        request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .then(res => {
+          expect(res.status).to.equal(204);
+          done();
         })
         .catch(done);
       });

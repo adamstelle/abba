@@ -4,7 +4,7 @@
 const multer = require('multer');
 const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
-const debug = require('debug')('abba:profile-route');
+const debug = require('debug')('abba:photo-route');
 const upload = multer({dest: `${__dirname}/../data`});
 
 // app
@@ -23,7 +23,7 @@ photoRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.si
   .catch(next);
 });
 
-photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.profilePhotoDelete, function(req, res, next) {
+photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
   debug('DELETE /api/profile/:profID/photo/:id');
   Profile.findByIdAndRemovePhoto(req.params.profID, req.photo)
   .then(() => res.sendStatus(204))
@@ -37,9 +37,9 @@ photoRouter.post('/api/bedroom/:bedroomID/photo', jsonParser, bearerAuth, upload
   .catch(next);
 });
 
-photoRouter.delete('/api/bedroom/:bedroomID/photo/:id', bearerAuth, photoMiddleware.bedroomPhotoDelete, function(req, res, next) {
+photoRouter.delete('/api/bedroom/:bedroomID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
   debug('DELETE /api/bedroom/:bedroomID/photo/:id');
-  Bedroom.findByIdAndRemovePhoto(req.params.profID, req.photo)
+  Bedroom.findByIdAndRemovePhoto(req.params.bedroomID, req.params.id)
   .then(() => res.sendStatus(204))
   .catch(next);
 });

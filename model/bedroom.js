@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 const createError = require('http-errors');
+const Photo = require('../model/photo.js');
 const debug = require('debug')('abba:bedroom');
 
 const bedroomSchema = mongoose.Schema({
@@ -33,15 +34,16 @@ Bedroom.findByIdAndAddPhotos = function(id, photos){
   });
 };
 
-Bedroom.findByIdAndRemovePhoto = function(id, photo){
+Bedroom.findByIdAndRemovePhoto = function(id, photoID){
   debug('findByIdAndRemovePhoto');
-  return Bedroom.findById(id)
+  return Photo.findById(photoID).remove()
   .catch(err => Promise.reject(createError(404, err.message)))
-  .then(profile => {
-    profile.photo = photo._id;
-    return profile.save();
+  .then(() => {
+    return Bedroom.findById(id);
   })
-  .then(profile => {
-    return profile;
+  .then(bedroom => {
+    console.log('bedroom', bedroom);
+    bedroom.photos.pull({id:photoID});
+    return bedroom.save();
   });
 };

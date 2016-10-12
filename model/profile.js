@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const createError = require('http-errors');
+const Photo = require('../model/photo.js');
 const debug = require('debug')('abba:profile');
 
 const profileSchema = mongoose.Schema({
@@ -32,13 +33,13 @@ Profile.findByIdAndAddPhoto = function(id, photo){
 
 Profile.findByIdAndRemovePhoto = function(id, photo){
   debug('findByIdAndRemovePhoto');
-  return Profile.findById(id)
+  return Photo.findById(photo._id).remove()
   .catch(err => Promise.reject(createError(404, err.message)))
-  .then(profile => {
-    profile.photo = photo._id;
-    return profile.save();
+  .then(() => {
+    return Profile.findById(id);
   })
   .then(profile => {
-    return profile;
+    profile.photo = null;
+    return profile.save();
   });
 };
