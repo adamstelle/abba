@@ -10,6 +10,7 @@ const expect = require('chai').expect;
 const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 
+const userMock = require('./lib/user-mock.js');
 const estimateMock = require('./lib/estimate-mock.js');
 const cleanUpDatabase = require('./lib/clean-up-mock.js');
 
@@ -30,7 +31,6 @@ describe('testing estimate routes', function(){
       before(done => estimateMock.call(this, done));
 
       it('should return an estimate', (done) => {
-        console.log('HITTING THIS');
         request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}/estimate/${this.tempEstimate._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
@@ -43,24 +43,24 @@ describe('testing estimate routes', function(){
 
     describe('with an invalid estimateID', function() {
       before(done => estimateMock.call(this, done));
-      it('should return a 400 not found', (done) => {
+      it('should return a 404 not found', (done) => {
         request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}/estimate/:badID`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
-          expect(res.status).to.equal(400);
+          expect(res.status).to.equal(404);
           done();
         });
       });
     });//end of GET with invalid residenceID
 
-    describe('with invalid Bearer auth', function(){
+    describe('with invalid header', function(){
       before(done => estimateMock.call(this, done));
       it('should return a 401 error with invalid Bearer', done => {
         request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}/estimate/${this.tempEstimate._id}`)
         .set({ Authorization: 'bad request' })
         .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.text).to.equal('UnauthorizedError');
+          expect(res.status).to.equal(400);
+          expect(res.text).to.equal('BadRequestError');
           done();
         });
       });
@@ -79,17 +79,33 @@ describe('testing estimate routes', function(){
 
     describe('with invalid bedroom id', function(){
       before(done => estimateMock.call(this, done));
-      it('should return a 400 error with invalid ID', done => {
+      it('should return a 404 error not found', done => {
         request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/badBedroomID/estimate/${this.tempEstimate._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
+          expect(res.status).to.equal(404);
+          expect(res.text).to.equal('NotFoundError');
           done();
         });
       });
     });
+
+    describe('with unathorized user', function() {
+      before(done => estimateMock.call(this, done));
+      before(done => userMock.call(this,done));
+
+      it('should return a 401 unauthorized user', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}/estimate/${this.tempEstimate._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+
   });
 });

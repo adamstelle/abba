@@ -10,7 +10,7 @@ const expect = require('chai').expect;
 const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 
-// const userMock = require('./lib/user-mock.js');
+const userMock = require('./lib/user-mock.js');
 const profileMock = require('./lib/profile-mock.js');
 const residenceMock = require('./lib/residence-mock.js');
 const cleanUpDatabase = require('./lib/clean-up-mock.js');
@@ -239,7 +239,7 @@ describe('testing residence routes', function() {
 
   describe('testing GET /api/:id/residence/:id', function() {
     //with valid password and auth?
-    describe('with valid ID', function() {
+    describe('with valid ID and token', function() {
       before(done => residenceMock.call(this, done));
       it('should return a residenceID', (done) => {
         request.get(`${url}/api/residence/${this.tempResidence._id}`)
@@ -261,40 +261,16 @@ describe('testing residence routes', function() {
       });
     }); //end of GET with valid residenceID
 
-    describe('with an invalid residenceID', function() {
+    describe('with unathorized user', function() {
       before(done => residenceMock.call(this, done));
-      it('should return a 400 not found', (done) => {
-        request.get(`${url}/api/residence/:wrongid`)
+      before(done => userMock.call(this,done));
+
+      it('should return a 401 unauthorized user', (done) => {
+        request.get(`${url}/api/residence/${this.tempResidence._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
-          //may be a false positive. Error handling in residence get router sends 400 error if anything goes wrong with Residence.findById
-          expect(res.status).to.equal(400);
-          done();
-        });
-      });
-    });//end of GET with invalid residenceID
-
-    describe('with valid token and id', function(){
-      before(done => residenceMock.call(this, done));
-      it('should return a residence', done => {
-        request.get(`${url}/api/residence/${this.tempResidence._id}`)
-        .set({
-          Authorization: `Bearer ${this.tempToken}`,
-        })
-        .end((err, res) => {
-          if (err) return done(err);
-          let date = new Date(res.body.dateBuilt).toString();
-          expect(date).to.not.equal('Invalid Date');
-          expect(res.body.sqft).to.equal(this.tempResidence.sqft);
-          expect(res.body.type).to.equal(this.tempResidence.type);
-          expect(res.body.street).to.equal(this.tempResidence.street);
-          expect(res.body.city).to.equal(this.tempResidence.city);
-          expect(res.body.state).to.equal(this.tempResidence.state);
-          expect(res.body.zip).to.equal(this.tempResidence.zip);
-          expect(res.body.address).to.equal(this.tempResidence.address);
-          expect(res.body.userID).to.equal(this.tempUser._id.toString());
-
-          expect(res.status).to.equal(200);
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
           done();
         });
       });
@@ -315,14 +291,14 @@ describe('testing residence routes', function() {
       });
     });
 
-    describe('with invalid Bearer auth', function(){
+    describe('with invalid header', function(){
       before(done => residenceMock.call(this, done));
       it('should return a 401 error with invalid Bearer', done => {
         request.get(`${url}/api/residence/${this.tempResidence._id}`)
-        .set({ Authorization: 'bad request' })
+        .set({Authorization: 'bad request'})
         .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.text).to.equal('UnauthorizedError');
+          expect(res.status).to.equal(400);
+          expect(res.text).to.equal('BadRequestError');
           done();
         });
       });
@@ -339,16 +315,16 @@ describe('testing residence routes', function() {
       });
     });
 
-    describe('with invalid id', function(){
+    describe('with invalid residence id', function(){
       before(done => residenceMock.call(this, done));
-      it('should return a 400 error with invalid ID', done => {
+      it('should return a 404 error with invalid ID', done => {
         request.get(`${url}/api/residence/invalid`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
         .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
+          expect(res.status).to.equal(404);
+          expect(res.text).to.equal('NotFoundError');
           done();
         });
       });
@@ -356,6 +332,21 @@ describe('testing residence routes', function() {
   });
 
   describe('testing DELETE /api/residence/:resID', function(){
+
+    describe('with unathorized user', function() {
+      before(done => residenceMock.call(this, done));
+      before(done => userMock.call(this,done));
+
+      it('should return a 401 unauthorized user', (done) => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
 
     describe('with valid token and ids', function(){
       before(done => residenceMock.call(this, done));
@@ -396,14 +387,14 @@ describe('testing residence routes', function() {
       });
     });
 
-    describe('with invalid bearer auth', function(){
+    describe('with invalid header auth', function(){
       before(done => residenceMock.call(this, done));
-      it('should respond with status 401', done => {
+      it('should respond with status 400', done => {
         request.delete(`${url}/api/residence/${this.tempResidence._id}`)
         .set({Authorization: 'lul this is bad}'})
         .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.text).to.equal('UnauthorizedError');
+          expect(res.status).to.equal(400);
+          expect(res.text).to.equal('BadRequestError');
           done();
         });
       });

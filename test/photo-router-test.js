@@ -36,6 +36,7 @@ describe('testing photo middleware', function(){
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
   afterEach(done => cleanUpDatabase(done));
+  
   describe('testing POST /api/profile/:profileID/photo', () => {
     describe('with valid body, auth and ID', () => {
       before(done => profileMock.call(this, done));
@@ -66,7 +67,7 @@ describe('testing photo middleware', function(){
   describe('testing DELETE /api/profile/:profileID/photo/:id', () => {
     describe('testing with valid auth and ID', () => {
       beforeEach(done => profilePhotoMock.call(this, done));
-      it('should return a 204', done => {
+      it('should return a 204 and remove photo from profile', done => {
         request.delete(`localhost:3000/api/profile/${this.tempProfile._id}/photo/${this.tempPhoto._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
@@ -93,7 +94,7 @@ describe('testing photo middleware', function(){
   describe('testing POST /api/bedroom/:bedroomID/photo', () => {
     describe('single photo with valid body, auth and ID', () => {
       before(done => bedroomMock.call(this, done));
-      it('should return a photo', done => {
+      it('should return a photo and add photo to bedrrom', done => {
         request.post(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,

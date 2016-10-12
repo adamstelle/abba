@@ -27,7 +27,7 @@ residenceRouter.get('/api/residence/:resID', bearerAuth, function(req, res, next
   debug('GET /api/residence/:resID');
 
   Residence.findById(req.params.resID)
-  .catch(err => Promise.reject(createError(400, err.message)))
+  .catch(() => Promise.reject(createError(404, 'Invalid resID')))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
       return Promise.reject(createError(401, 'invalid userID'));
@@ -37,7 +37,7 @@ residenceRouter.get('/api/residence/:resID', bearerAuth, function(req, res, next
 });
 
 residenceRouter.delete('/api/residence/:resID', bearerAuth, function(req, res, next) {
-  debug('DELETE /api/residence/:resID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  debug('DELETE /api/residence/:resID');
 
   Residence.findById(req.params.resID)
   .then(residence => {

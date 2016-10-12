@@ -15,15 +15,21 @@ bedroomRouter.post('/api/residence/:resID/bedroom', bearerAuth, jsonParser, func
   debug('POST /api/residence/:resID/bedroom');
   req.body.userID = req.user._id;
   req.body.residenceID = req.params.resID;
-  new Bedroom(req.body).save()
-  .then(bedroom => {
-    Residence.findByIdAndAddBedroom(req.params.resID, bedroom)
-    .then(residence => {
-      req.residence = residence;
-      res.json(bedroom);
-    });
+  Residence.findById(req.params.resID)
+  .then((residence) => {
+    if (residence.userID.toString() !== req.user._id.toString())
+      return next(createError(401, 'invalid userID'));
+    new Bedroom(req.body).save()
+    .then(bedroom => {
+      Residence.findByIdAndAddBedroom(req.params.resID, bedroom)
+      .then(residence => {
+        req.residence = residence;
+        res.json(bedroom);
+      });
+    })
+    .catch(err => next(err));
   })
-  .catch(next);
+  .catch(err => next(createError(404, err.message)));
 });
 
 bedroomRouter.get('/api/residence/:resID/bedroom/:id', bearerAuth, function(req, res, next) {
@@ -44,7 +50,7 @@ bedroomRouter.put('/api/residence/:resID/bedroom/:id', bearerAuth, jsonParser, f
   Bedroom.findById(req.params.id)
   .then( bedroom => {
     if(bedroom.userID.toString() !== req.user._id.toString())
-      return Promise.reject(createError(401, 'invalid userid'));
+      return next(createError(401, 'invalid userid'));
     return Bedroom.findByIdAndUpdate( bedroom._id, req.body, { new:true});
   })
   .then(bedroom => res.json(bedroom))
@@ -64,7 +70,7 @@ bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(r
   })
   .then( bedroom => {
     if(bedroom.userID.toString() !== req.user._id.toString())
-      return Promise.reject(createError(401, 'invalid userID'));
+      return next(createError(401, 'invalid userID'));
     return Bedroom.findByIdAndRemove(bedroom._id);
   })
   .then( () => {
@@ -73,4 +79,3 @@ bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(r
   .then(() => res.status(204).send())
   .catch(next);
 });
-
