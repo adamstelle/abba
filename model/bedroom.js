@@ -1,10 +1,11 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Estimate = require('./estimate.js');
-const Photo = require('./photo.js');
 const createError = require('http-errors');
 const debug = require('debug')('bedroom:model');
+
+const Estimate = require('./estimate.js');
+const Photo = require('./photo.js');
 
 const bedroomSchema = mongoose.Schema({
   type: {type: String, required: true },
@@ -22,6 +23,7 @@ const Bedroom = module.exports = mongoose.model('bedroom', bedroomSchema);
 
 Bedroom.removeBedroom = function(bedroomID) {
   debug('Bedroom: removeBedroom');
+  
   let tempBed = null;
   return Bedroom.findById(bedroomID)
     .catch(err => Promise.reject(createError(404, err.message)))

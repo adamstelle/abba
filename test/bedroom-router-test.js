@@ -9,7 +9,6 @@ const expect = require('chai').expect;
 const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 const Residence = require('../model/residence.js');
-const Bedroom = require('../model/bedroom.js');
 
 const bedroomMock = require('./lib/bedroom-mock.js');
 const userMock = require('./lib/user-mock.js');

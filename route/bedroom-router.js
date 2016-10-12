@@ -63,7 +63,6 @@ bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(r
     return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
   })
   .then( bedroom => {
-    console.log('bedrooooooooooom',bedroom);
     if(bedroom.userID.toString() !== req.user._id.toString())
       return Promise.reject(createError(401, 'invalid userID'));
     return Bedroom.removeBedroom(bedroom._id);
