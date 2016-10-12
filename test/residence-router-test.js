@@ -291,11 +291,11 @@ describe('testing residence routes', function() {
       });
     });
 
-    describe('with invalid Bearer auth', function(){
+    describe('with invalid header', function(){
       before(done => residenceMock.call(this, done));
       it('should return a 401 error with invalid Bearer', done => {
         request.get(`${url}/api/residence/${this.tempResidence._id}`)
-        .set({ Authorization: 'bad request' })
+        .set({Authorization: 'bad request'})
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.text).to.equal('BadRequestError');
@@ -389,7 +389,7 @@ describe('testing residence routes', function() {
 
     describe('with invalid header auth', function(){
       before(done => residenceMock.call(this, done));
-      it('should respond with status 401', done => {
+      it('should respond with status 400', done => {
         request.delete(`${url}/api/residence/${this.tempResidence._id}`)
         .set({Authorization: 'lul this is bad}'})
         .end((err, res) => {

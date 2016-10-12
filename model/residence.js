@@ -21,7 +21,6 @@ const Residence = module.exports = mongoose.model('residence', residenceSchema);
 
 Residence.findByIdAndAddBedroom = function(id, bedroom) {
   debug('Residence: findByIdAndAddBedroom');
-
   return Residence.findById(id)
     .catch(err => Promise.reject(createError(404, err.message)))
     .then(residence => {
