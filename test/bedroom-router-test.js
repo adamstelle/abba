@@ -125,6 +125,22 @@ describe('testing bedroom router', function() {
       });
     }); 
 
+    describe('with invalid header', function() {
+      before(done => residenceMock.call(this, done));
+
+      it('should return a 401 not authorized', (done) => {
+        request.post(`${url}/api/residence/${this.tempResidence._id}/bedroom`)
+        .send(exampleBedroom)
+        .set({Authorization: `Bearer ${this.tempToken + ' '}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.unauthorized).to.be.true;
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    }); 
+
     describe('with invalid residence id', function() {
       before(done => userMock.call(this, done));
       before(done => residenceMock.call(this, done));
