@@ -40,13 +40,13 @@ describe('testing profile routes', function() {
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
-      .end((err, res) => {
-        if (err) return done(err);
-        expect(res.status).to.equal(200);
-        expect(res.body.firstName).to.equal(exampleProfileData.firstName);
-        expect(res.body.lastName).to.equal(exampleProfileData.lastName);
-        done();
-      });
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body.firstName).to.equal(exampleProfileData.firstName);
+          expect(res.body.lastName).to.equal(exampleProfileData.lastName);
+          done();
+        });
       });
     });
 
@@ -58,11 +58,11 @@ describe('testing profile routes', function() {
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })
-      .end((err, res) => {
-        expect(res.status).to.equal(400);
-        expect(err).to.not.be.null;
-        done();
-      });
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err).to.not.be.null;
+          done();
+        });
       });
     });
 
@@ -74,11 +74,115 @@ describe('testing profile routes', function() {
         .set({
           Authorization: 'Bearer faketown',
         })
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+  });
+
+  describe('with body missing required firstName', function() {
+    before(done => userMock.call(this, done));
+
+    it('should return a 400 bad request', (done) => {
+      let modProfData = Object.assign({}, exampleProfileData);
+      delete modProfData.firstName;
+      request.post(`${url}/api/profile`)
+      .set({Authorization: `Bearer ${this.tempToken}`})
+      .send(modProfData)
+      .set('Character-Type', 'application/json')
       .end((err, res) => {
-        expect(res.status).to.equal(401);
-        expect(err).to.not.be.null;
+        expect(res.status).to.equal(400);
+        expect(err.message).to.equal('Bad Request');
         done();
       });
+    });
+  });
+
+  describe('with body missing required lastName', function() {
+    before(done => userMock.call(this, done));
+
+    it('should return a 400 bad request', (done) => {
+      let modProfData = Object.assign({}, exampleProfileData);
+      delete modProfData.lastName;
+      request.post(`${url}/api/profile`)
+      .set({Authorization: `Bearer ${this.tempToken}`})
+      .send(modProfData)
+      .set('Character-Type', 'application/json')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(err.message).to.equal('Bad Request');
+        done();
+      });
+    });
+  });
+
+  describe('with body missing required email', function() {
+    before(done => userMock.call(this, done));
+
+    it('should return a 400 bad request', (done) => {
+      let modProfData = Object.assign({}, exampleProfileData);
+      delete modProfData.email;
+      request.post(`${url}/api/profile`)
+      .set({Authorization: `Bearer ${this.tempToken}`})
+      .send(modProfData)
+      .set('Character-Type', 'application/json')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(err.message).to.equal('Bad Request');
+        done();
+      });
+    });
+  });
+
+  describe('with body missing required phone', function() {
+    before(done => userMock.call(this, done));
+
+    it('should return a 400 bad request', (done) => {
+      let modProfData = Object.assign({}, exampleProfileData);
+      delete modProfData.phone;
+      request.post(`${url}/api/profile`)
+      .set({Authorization: `Bearer ${this.tempToken}`})
+      .send(modProfData)
+      .set('Character-Type', 'application/json')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        expect(err.message).to.equal('Bad Request');
+        done();
+      });
+    });
+  });
+
+  describe('with duplicate email', function() {
+    before(done => profileMock.call(this, done));
+    it('should return a 409 bad request', (done) => {
+      let modProfData = Object.assign({}, exampleProfileData);
+      modProfData.email = this.tempProfile.email;
+      request.post(`${url}/api/profile`)
+      .set({Authorization: `Bearer ${this.tempToken}`})
+      .send(modProfData)
+      .set('Character-Type', 'application/json')
+      .end((err, res) => {
+        expect(res.status).to.equal(409);
+        expect(err.message).to.equal('Conflict');
+        done();
+      });
+    });
+  });
+
+  describe('with no body', function() {
+    before(done => userMock.call(this, done));
+
+    it('should return a 400 bad request', (done) => {
+      request.post(`${url}/api/profile`)
+      .set({Authorization: `Bearer ${this.tempToken}`})
+      .send()
+      .set('Character-Type', 'application/json')
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
       });
     });
   });
@@ -86,9 +190,6 @@ describe('testing profile routes', function() {
   describe('testing GET to /api/profile/:id', () => {
     describe('testing with with valid profile_id', function() {
       before(done => profileMock.call(this, done));
-      after(() => {
-        delete this.tempProfile.userID;
-      });
 
       it('should return a profile', done => {
         request.get(`${url}/api/profile/${this.tempProfile._id}`)
@@ -109,11 +210,6 @@ describe('testing profile routes', function() {
 
     describe('testing with Invalid profile_id', function() {
       before(done => profileMock.call(this, done));
-
-      after(() => {
-        delete this.tempProfile.userID;
-      });
-
       it('should return a 404 error', done => {
         request.get(`${url}/api/profile/3334`)
         .set({
@@ -127,19 +223,42 @@ describe('testing profile routes', function() {
       });
     });
 
-    describe('testing with Invalid token', function() {
+    describe('testing with invalid token', function() {
       before(done => profileMock.call(this, done));
-
-      after(() => {
-        delete this.tempProfile.userID;
-      });
-
       it('should return a 401 error', done => {
         request.get(`${url}/api/profile/${this.tempProfile._id}`)
-        .set({})
+        .set({Authorization: `Bearer ${this.tempToken}FAKENESS`})
         .end((err, res) => {
           expect(res.status).to.equal(401);
           expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('testing with invalid header', function() {
+      before(done => profileMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.get(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: 'Notbearer!'})
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with unathorized user', function() {
+      before(done => profileMock.call(this, done));
+      before(done => userMock.call(this,done));
+
+      it('should return a 401 unauthorized user', (done) => {
+        request.get(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
           done();
         });
       });
@@ -177,6 +296,47 @@ describe('testing profile routes', function() {
         });
       });
     });
+
+    describe('testing with invalid token', function() {
+      before(done => profileMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.delete(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}FAKENESS`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('testing with invalid header', function() {
+      before(done => profileMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.delete(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: 'Notbearer!'})
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with unathorized user', function() {
+      before(done => profileMock.call(this, done));
+      before(done => userMock.call(this,done));
+
+      it('should return a 401 unauthorized user', (done) => {
+        request.delete(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
   });
 
   describe('testing PUT api/profile/:id', () => {
@@ -189,36 +349,80 @@ describe('testing profile routes', function() {
       before(done => profileMock.call(this, done));
       it('should update a profile with valid id / body', done => {
         request.put(`${url}/api/profile/${this.tempProfile._id}`)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`,
-          })
-          .send(updatedProfile)
-          .end((err, res) => {
-            if(err) done(err);
-            expect(res.status).to.equal(200);
-            for (var i in updatedProfile) {
-              expect(res.body[i]).to.equal(updatedProfile[i]);
-            }
-            expect(res.body).to.have.property('email');
-            expect(res.body).to.have.property('status');
-            expect(err).to.be.null;
-            done();
-          });
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .send(updatedProfile)
+        .end((err, res) => {
+          if(err) done(err);
+          expect(res.status).to.equal(200);
+          for (var i in updatedProfile) {
+            expect(res.body[i]).to.equal(updatedProfile[i]);
+          }
+          expect(res.body).to.have.property('email');
+          expect(res.body).to.have.property('status');
+          expect(err).to.be.null;
+          done();
+        });
       });
     });
 
     describe('testing with Invalid id', () => {
       it('should return a error for updating with Invalid id', done => {
         request.put(`${url}/api/profile/${8888}`)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`,
-          })
-          .send(updatedProfile)
-          .end((err, res) => {
-            expect(res.status).to.equal(404);
-            expect(err).to.not.be.null;
-            done();
-          });
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .send(updatedProfile)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('testing with invalid token', function() {
+      before(done => profileMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.put(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}FAKENESS`})
+        .send(updatedProfile)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('testing with invalid header', function() {
+      before(done => profileMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.put(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: 'Notbearer!'})
+        .send(updatedProfile)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err).to.not.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('with unathorized user', function() {
+      before(done => profileMock.call(this, done));
+      before(done => userMock.call(this,done));
+
+      it('should return a 401 unauthorized user', (done) => {
+        request.put(`${url}/api/profile/${this.tempProfile._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .send(updatedProfile)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
       });
     });
 
@@ -227,35 +431,15 @@ describe('testing profile routes', function() {
 
       it('should return a error for updating with Invalid id', done => {
         request.put(`${url}/api/profile/${this.tempProfile._id}`)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`,
-            'Content-Type':'application/json',
-          })
-          .send({name:'abba Team'})
-          .end((err, res) => {
-            expect(res.body).to.have.property('firstName');
-            expect(res.body).to.have.property('lastName');
-            expect(res.body).to.have.property('phone');
-            //expect(err).not.be.null;
-            done();
-          });
-      });
-    });
-
-    describe('testing with Invalid body and Invalid Id', () => {
-      before(done => profileMock.call(this, done));
-
-      it('should return a error for updating with Invalid id / body', done => {
-        request.put(`${url}/api/profile/${10099}`)
-        .set('Content-Type','application/json')
         .set({
           Authorization: `Bearer ${this.tempToken}`,
+          'Content-Type':'application/json',
         })
-          .send({name:'abba Team'})
-          .end((err) => {
-            expect(err).not.be.null;
-            done();
-          });
+        .send('}')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
       });
     });
   });
