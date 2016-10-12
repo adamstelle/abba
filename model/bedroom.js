@@ -1,6 +1,9 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const createError = require('http-errors');
+const Photo = require('../model/photo.js');
+const debug = require('debug')('abba:bedroom');
 
 const bedroomSchema = mongoose.Schema({
   type: {type: String, required: true },
@@ -10,8 +13,36 @@ const bedroomSchema = mongoose.Schema({
   privateBath: {type: Boolean, required: true},
   userID: {type: mongoose.Schema.Types.ObjectId, required: true},
   residenceID: {type: mongoose.Schema.Types.ObjectId, required: true},
-  photoArray: [{type: mongoose.Schema.Types.ObjectId}],
+  photos: [{type: mongoose.Schema.Types.ObjectId, ref: 'photos'}],
   estimateID: {type: mongoose.Schema.Types.ObjectId},
 });
 
-module.exports = mongoose.model('bedroom', bedroomSchema);
+const Bedroom = module.exports = mongoose.model('bedroom', bedroomSchema);
+
+Bedroom.findByIdAndAddPhotos = function(id, photos){
+  debug('findByIdAndAddPhotos');
+  return Bedroom.findById(id)
+  .catch(err => Promise.reject(createError(404, err.message)))
+  .then(bedroom => {
+    photos.forEach(i => {
+      bedroom.photos.push(i);
+    });
+    return bedroom.save();
+  })
+  .then(bedroom => {
+    return bedroom;
+  });
+};
+
+Bedroom.findByIdAndRemovePhoto = function(id, photo){
+  debug('findByIdAndRemovePhoto');
+  return Photo.findById(photo._id).remove()
+  .catch(err => Promise.reject(createError(404, err.message)))
+  .then(() => {
+    return Bedroom.findById(id);
+  })
+  .then(bedroom => {
+    bedroom.photos.pull({_id:photo._id});
+    return bedroom.save();
+  });
+};
