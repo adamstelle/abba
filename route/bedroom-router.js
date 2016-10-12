@@ -38,9 +38,22 @@ bedroomRouter.get('/api/residence/:resID/bedroom/:id', bearerAuth, function(req,
   .catch(err => next(createError(404, err.message)));
 });
 
-// bedroomRouter.put('/api/residence/:resID/bedroom/:bedID', bearerAuth, jsonParser, function(req, res, next) {
-//   debug('PUT /api/residence/:resID/bedroom/:bedID');
-// });
+bedroomRouter.put('/api/residence/:resID/bedroom/:id', bearerAuth, jsonParser, function(req, res, next) {
+  debug('PUT /api/residence/:resID/bedroom/:bedID');
+
+  Bedroom.findById(req.params.id)
+  .then( bedroom => {
+    if(bedroom.userID.toString() !== req.user._id.toString())
+      return Promise.reject(createError(401, 'invalid userid'));
+    return Bedroom.findByIdAndUpdate( bedroom._id, req.body, { new:true});
+  })
+  .then(bedroom => res.json(bedroom))
+  .catch(err => {
+    if(err.name === 'validationError') return next(err);
+    if(err.status) return next(err);
+    next(createError(404, 'not found'));
+  });
+});
 
 bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(req, res, next) {
   debug('DELETE /api/residence/:resID/bedroom/:id');

@@ -247,10 +247,10 @@ describe('testing profile routes', function() {
 
       it('should return a error for updating with Invalid id / body', done => {
         request.put(`${url}/api/profile/${10099}`)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`,
-            'Content-Type':'application/json',
-          })
+        .set('Content-Type','application/json')
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
           .send({name:'abba Team'})
           .end((err) => {
             expect(err).not.be.null;
