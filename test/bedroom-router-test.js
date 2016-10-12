@@ -71,14 +71,12 @@ describe('testing bedroom router', function() {
           })
           .catch(err => {
             expect(err).to.not.be.null;
-            expect(res.status).to.equal(404);
+            expect(res.status).to.equal(400);
           });
           done();
         });
       });
     });
-
-
 
     describe('with invalid body', function() {
       before(done => residenceMock.call(this, done));
@@ -230,6 +228,29 @@ describe('testing bedroom router', function() {
         });
       });
     });
+
+    // describe('with valid beroom Id', function() {
+    //   before(done => residenceMock.call(this, done));
+
+    //   it('should return 204 if bedroom_id deleted from Resedence bedrooms array', (done) => {
+    //     request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+    //     .set({Authorization: `Bearer ${this.tempToken}`})
+    //     .end((err, res) => {
+    //       console.log('this.tempResidence._id========================>', this.tempResidence);
+    //       Residence.findById(this.tempResidence._id)
+    //       .then(residence => {
+    //         expect(err).to.be.null;
+    //         expect(this.tempBedroom._id).to.not.be.oneOf(residence.bedrooms); 
+    //         expect(res.status).to.equal(204);
+    //       })
+    //       .catch(err => {
+    //         expect(err).to.not.be.null;
+    //         expect(res.status).to.equal(404);
+    //       });
+    //       done();
+    //     });
+    //   });
+    // });
 
     describe('with Invalid bedroom id', function() {
       before(done => bedroomMock.call(this, done));
