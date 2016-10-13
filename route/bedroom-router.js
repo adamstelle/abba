@@ -5,6 +5,7 @@ const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('abba:bedroom-router');
 
+
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const Residence = require('../model/residence.js');
 const Bedroom = require('../model/bedroom.js');
