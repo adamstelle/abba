@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/adamstelle/abba/badge.svg?branch=staging)](https://coveralls.io/github/adamstelle/abba?branch=staging)
+
 # Abba
 An app to predict short-term rental income for homeowners and renters.
 

@@ -116,7 +116,7 @@ describe('testing photo middleware', function(){
     describe('with invalid profile ID', () => {
       before(done => profileMock.call(this, done));
       it('should return a 404 error', done => {
-        request.post(`localhost:3000/api/profile/${this.tempProfile._id}FAKE/photo`)
+        request.post(`localhost:3000/api/profile/FAKE${this.tempProfile._id}NESS/photo`)
         .set({
           Authorization: `Bearer ${this.tempToken}`,
         })

@@ -25,8 +25,7 @@ photoRouter.post('/api/profile/:profID/photo', jsonParser, bearerAuth, upload.si
       return next(createError(401, 'invalid userID'));
     Profile.findByIdAndAddPhoto(req.params.profID, res.photo)
     .then(() => res.json(res.photo));
-  })
-  .catch(err => next(createError(404, err.message)));
+  });
 });
 
 photoRouter.delete('/api/profile/:profID/photo/:id', bearerAuth, photoMiddleware.photoDelete, function(req, res, next) {
@@ -44,8 +43,7 @@ photoRouter.post('/api/bedroom/:bedroomID/photo', jsonParser, bearerAuth, upload
       return next(createError(401, 'invalid userID'));
     Bedroom.findByIdAndAddPhotos(req.params.bedroomID, req.photos)
     .then(() => res.json(req.photos));
-  })
-  .catch(err => next(createError(404, err.message)));
+  });
 });
 
 

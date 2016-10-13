@@ -1,7 +1,6 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const createError = require('http-errors');
 
 const Photo = require('./photo.js');
 const Estimate = require('./estimate.js');
@@ -24,7 +23,6 @@ const Bedroom = module.exports = mongoose.model('bedroom', bedroomSchema);
 Bedroom.findByIdAndAddPhotos = function(id, photos){
   debug('findByIdAndAddPhotos');
   return Bedroom.findById(id)
-  .catch(err => Promise.reject(createError(404, err.message)))
   .then(bedroom => {
     photos.forEach(i => {
       bedroom.photos.push(i);
@@ -39,7 +37,6 @@ Bedroom.findByIdAndAddPhotos = function(id, photos){
 Bedroom.findByIdAndRemovePhoto = function(id, photo){
   debug('findByIdAndRemovePhoto');
   return Photo.findById(photo._id).remove()
-  .catch(err => Promise.reject(createError(404, err.message)))
   .then(() => {
     return Bedroom.findById(id);
   })
@@ -51,10 +48,8 @@ Bedroom.findByIdAndRemovePhoto = function(id, photo){
 
 Bedroom.removeBedroom = function(bedroomID) {
   debug('removeBedroom');
-
   let tempBed = null;
   return Bedroom.findById(bedroomID)
-    .catch(err => Promise.reject(createError(404, err.message)))
     .then(bed => {
       tempBed = bed;
       return Estimate.remove({bedID: bedroomID});
