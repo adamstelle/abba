@@ -59,11 +59,9 @@ describe('testing photo middleware', function(){
             expect(res.body.caption).to.equal(examplePhoto.caption);
           });
           done();
-        })
-        .catch(done);
+        });
       });
     });
-
     describe('with invalid body, valid auth and ID', () => {
       before(done => profileMock.call(this, done));
       it('should return a 400 error', done => {
@@ -81,7 +79,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid token', () => {
       before(done => profileMock.call(this, done));
       it('should return a 400 error', done => {
@@ -99,7 +96,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid header', () => {
       before(done => profileMock.call(this, done));
       it('should return a 400 error', done => {
@@ -113,6 +109,23 @@ describe('testing photo middleware', function(){
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with invalid profile ID', () => {
+      before(done => profileMock.call(this, done));
+      it('should return a 404 error', done => {
+        request.post(`localhost:3000/api/profile/${this.tempProfile._id}FAKE/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err.message).to.equal('Not Found');
           done();
         });
       });
@@ -136,7 +149,6 @@ describe('testing photo middleware', function(){
       });
     });
   });
-
   describe('testing DELETE /api/profile/:profileID/photo/:id', () => {
     describe('testing with valid auth and ID', () => {
       beforeEach(done => profilePhotoMock.call(this, done));
@@ -148,8 +160,7 @@ describe('testing photo middleware', function(){
         .then(res => {
           expect(res.status).to.equal(204);
           done();
-        })
-        .catch(done);
+        });
       });
       it('should remove the photo from the profile', done => {
         request.delete(`localhost:3000/api/profile/${this.tempProfile._id}/photo/${this.tempPhoto._id}`)
@@ -159,8 +170,7 @@ describe('testing photo middleware', function(){
         .then(res => {
           expect(res.status).to.equal(204);
           done();
-        })
-        .catch(done);
+        });
       });
     });
     describe('with invalid profile ID', () => {
@@ -177,7 +187,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid token', () => {
       before(done => profilePhotoMock.call(this, done));
       it('should return a 400 error', done => {
@@ -192,7 +201,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid header', () => {
       before(done => profilePhotoMock.call(this, done));
       it('should return a 400 error', done => {
@@ -223,7 +231,6 @@ describe('testing photo middleware', function(){
       });
     });
   });
-
   describe('testing POST /api/bedroom/:bedroomID/photo', () => {
     describe('single photo with valid body, auth and ID', () => {
       before(done => bedroomMock.call(this, done));
@@ -248,8 +255,7 @@ describe('testing photo middleware', function(){
             expect(res.body[0].caption).to.equal(examplePhoto.caption);
             done();
           });
-        })
-        .catch(done);
+        });
       });
     });
     describe('with invalid body, valid auth and ID', () => {
@@ -269,7 +275,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid token', () => {
       before(done => bedroomMock.call(this, done));
       it('should return a 400 error', done => {
@@ -301,6 +306,23 @@ describe('testing photo middleware', function(){
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with invalid profile ID', () => {
+      before(done => bedroomMock.call(this, done));
+      it('should return a 404 error', done => {
+        request.post(`localhost:3000/api/bedroom/${this.tempBedroom._id}FAKE/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err.message).to.equal('Not Found');
           done();
         });
       });
@@ -335,8 +357,7 @@ describe('testing photo middleware', function(){
         .then(res => {
           expect(res.status).to.equal(204);
           done();
-        })
-        .catch(done);
+        });
       });
       it('should remove the photo from the bedroom', done => {
         request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo/${this.tempPhoto._id}`)
@@ -346,8 +367,7 @@ describe('testing photo middleware', function(){
         .then(res => {
           expect(res.status).to.equal(204);
           done();
-        })
-        .catch(done);
+        });
       });
     });
     describe('with invalid profile ID', () => {
@@ -364,7 +384,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid token', () => {
       before(done => bedroomPhotoMock.call(this, done));
       it('should return a 400 error', done => {
@@ -379,7 +398,6 @@ describe('testing photo middleware', function(){
         });
       });
     });
-
     describe('with invalid header', () => {
       before(done => bedroomPhotoMock.call(this, done));
       it('should return a 400 error', done => {
