@@ -11,6 +11,7 @@ const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 
 const userMock = require('./lib/user-mock.js');
+const Residence = require('../model/residence.js');
 const profileMock = require('./lib/profile-mock.js');
 const residenceMock = require('./lib/residence-mock.js');
 const cleanUpDatabase = require('./lib/clean-up-mock.js');
@@ -355,7 +356,6 @@ describe('testing residence routes', function() {
         request.delete(`${url}/api/residence/${this.tempResidence._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
-          console.log('getting back to test file!');
           if (err) return done(err);
           expect(res.status).to.equal(204);
           done();
@@ -408,6 +408,24 @@ describe('testing residence routes', function() {
         .end((err, res) => {
           expect(res.status).to.equal(404);
           expect(res.text).to.equal('NotFoundError');
+          done();
+        });
+      });
+    });
+
+
+    describe('with valid residenceID', function(){
+      before(done => residenceMock.call(this, done));
+      it('should remove all dependinces', done => {
+
+        request.delete(`${url}/api/residence/${this.tempResidence._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          Residence.findById(this.tempResidence._id)
+          .catch(err => {
+            expect(res.status).to.equal(204);
+            expect(err).to.be.null;
+          });
           done();
         });
       });

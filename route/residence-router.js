@@ -8,7 +8,6 @@ const debug = require('debug')('abba:residence-router');
 
 //app modules
 const Residence = require('../model/residence.js');
-const Profile = require('../model/profile.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const residenceRouter = module.exports = Router();
@@ -23,10 +22,10 @@ residenceRouter.post('/api/residence', bearerAuth, jsonParser, function(req, res
   .catch(next);
 });
 
-residenceRouter.get('/api/residence/:resID', bearerAuth, function(req, res, next){
+residenceRouter.get('/api/residence/:id', bearerAuth, function(req, res, next){
   debug('GET /api/residence/:resID');
 
-  Residence.findById(req.params.resID)
+  Residence.findById(req.params.id)
   .catch(() => Promise.reject(createError(404, 'Invalid resID')))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
@@ -36,17 +35,18 @@ residenceRouter.get('/api/residence/:resID', bearerAuth, function(req, res, next
   .catch(next);
 });
 
-residenceRouter.delete('/api/residence/:resID', bearerAuth, function(req, res, next) {
-  debug('DELETE /api/residence/:resID');
 
-  Residence.findById(req.params.resID)
+residenceRouter.delete('/api/residence/:id', bearerAuth, function(req, res, next) {
+  debug('DELETE /api/residence/:id');
+  Residence.findById(req.params.id)
+  .catch(err =>  Promise.reject(createError(404, err.message)))
   .then(residence => {
     if (residence.userID.toString() !== req.user._id.toString())
       return Promise.reject(createError(401, 'invalid userID'));
-    return Residence.findByIdAndRemove(residence._id);
+    return Residence.findByIdAndRemoveResidence(residence._id);
   })
   .catch(err => {
-    return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
+    return Promise.reject(err.status ? err : createError(404, err.message));
   })
   .then(() => res.status(204).send())
   .catch(next);

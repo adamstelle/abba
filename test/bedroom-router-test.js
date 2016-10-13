@@ -258,12 +258,13 @@ describe('testing bedroom router', function() {
   });
 
   describe('testing DELETE requests to /api/residence/:resID/bedroom', function() {
-    describe('with valid bedroom id', function() {
+    describe('with valid BedroomId', function(){
       before(done => bedroomMock.call(this, done));
-      it('should delete a bedroom', (done) => {
+      it('should remove all dependinces {photos and estimate}', (done) => {
         request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
         .set({Authorization: `Bearer ${this.tempToken}`})
         .end((err, res) => {
+          if(err) return done(err);
           expect(res.status).to.equal(204);
           expect(err).to.be.null;
           done();
@@ -378,18 +379,18 @@ describe('testing bedroom router', function() {
       before(done => bedroomMock.call(this, done));
       it('should return 400 error', done => {
         request.put(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
-          .set('Content-Type','application/json')
-          .set({
-            Authorization: `Bearer ${this.tempToken}`,
-          })
-          .send('/')
-          .end((err, res) => {
-            expect(res.status).to.equal(400);
-            expect(res.body).not.have.property('sleepNum');
-            expect(res.body).not.have.property('privateBath');
-            expect(err).to.not.be.null;
-            done();
-          });
+        .set('Content-Type','application/json')
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .send('/')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body).not.have.property('sleepNum');
+          expect(res.body).not.have.property('privateBath');
+          expect(err).to.not.be.null;
+          done();
+        });
       });
     });
 
