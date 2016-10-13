@@ -6,6 +6,12 @@ const Photo = require('./photo.js');
 const Estimate = require('./estimate.js');
 const debug = require('debug')('abba:bedroom');
 
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+
+// module config
+AWS.config.setPromisesDependency(require('bluebird'));
+
 const bedroomSchema = mongoose.Schema({
   type: {type: String, required: true },
   bedSize: {type: String, required: true},
@@ -47,21 +53,35 @@ Bedroom.findByIdAndRemovePhoto = function(id, photo){
 };
 
 Bedroom.removeBedroom = function(bedroomID) {
-  debug('removeBedroom');
+  debug('Remove-Bedroom helper');
   let tempBed = null;
   return Bedroom.findById(bedroomID)
     .then(bed => {
       tempBed = bed;
       return Estimate.remove({bedID: bedroomID});
     })
-    .then(() =>{
+    .then(() => {
       let removeChildren = [];
       tempBed.photos.forEach( photo => {
-        removeChildren.push(Photo.findByIdAndRemove(photo._id));
+        removeChildren.push(Bedroom.deleteAllPhotos(photo._id));
+        removeChildren.push(Photo.findById(photo._id).remove());
       });
       return Promise.all(removeChildren);
     })
     .then(() => {
       return Bedroom.findByIdAndRemove(bedroomID);
     });
+};
+
+Bedroom.deleteAllPhotos = function(photoId){
+  debug('bedroom-photo-Delete helper');
+
+  Photo.findById(photoId)
+  .then(photo => {
+    let params = {
+      Bucket: 'cf401demo',
+      Key: photo.objectKey,
+    };
+    return s3.deleteObject(params).promise();
+  });
 };

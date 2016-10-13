@@ -9,6 +9,7 @@ const expect = require('chai').expect;
 const server = require('../server.js');
 const serverControl = require('./lib/server-control.js');
 const Residence = require('../model/residence.js');
+const Estimate = require('../model/estimate.js');
 
 const bedroomMock = require('./lib/bedroom-mock.js');
 const userMock = require('./lib/user-mock.js');
@@ -214,31 +215,6 @@ describe('testing bedroom router', function() {
       });
     });
 
-    describe('no auth header', function(){
-      before(done => bedroomMock.call(this, done));
-      it('should respond with status 401', done => {
-        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
-        .end((err, res) => {
-          expect(res.status).to.equal(401);
-          expect(res.text).to.equal('UnauthorizedError');
-          done();
-        });
-      });
-    });
-
-    describe('with invalid header auth', function(){
-      before(done => bedroomMock.call(this, done));
-      it('should respond with status 400', done => {
-        request.delete(`${url}/api/residence/${this.tempBedroom._id}`)
-        .set({Authorization: 'lul this is bad}'})
-        .end((err, res) => {
-          expect(res.status).to.equal(400);
-          expect(res.text).to.equal('BadRequestError');
-          done();
-        });
-      });
-    });
-
     describe('with Invalid residence_Id', function() {
       before(done => bedroomMock.call(this, done));
 
@@ -255,22 +231,6 @@ describe('testing bedroom router', function() {
         });
       });
     });
-  });
-
-  describe('testing DELETE requests to /api/residence/:resID/bedroom', function() {
-    describe('with valid BedroomId', function(){
-      before(done => bedroomMock.call(this, done));
-      it('should remove all dependinces {photos and estimate}', (done) => {
-        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
-        .set({Authorization: `Bearer ${this.tempToken}`})
-        .end((err, res) => {
-          if(err) return done(err);
-          expect(res.status).to.equal(204);
-          expect(err).to.be.null;
-          done();
-        });
-      });
-    });
 
     describe('with unathorized user', function() {
       before(done => bedroomMock.call(this, done));
@@ -281,6 +241,24 @@ describe('testing bedroom router', function() {
         .end((err, res) => {
           expect(res.status).to.equal(401);
           expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+  });
+
+  describe('testing DELETE requests to /api/residence/:resID/bedroom', function() {
+    describe('with valid BedroomId', function(){
+      before(done => bedroomMock.call(this, done));
+      it('should remove all dependinces {photos and estimate}', (done) => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .set({Authorization: `Bearer ${this.tempToken}`})
+        .end((err, res) => {
+          if(err) return done(err);
+          Estimate.findById({bedID: this.tempBedroom._id})
+          .catch(err => expect(err.name).to.equal('CastError'));
+          expect(res.status).to.equal(204);
+          expect(err).to.be.null;
           done();
         });
       });
@@ -325,6 +303,31 @@ describe('testing bedroom router', function() {
             expect(err).to.not.be.null;
             expect(res.status).to.equal(404);
           });
+          done();
+        });
+      });
+    });
+
+    describe('no auth header', function(){
+      before(done => bedroomMock.call(this, done));
+      it('should respond with status 401', done => {
+        request.delete(`${url}/api/residence/${this.tempResidence._id}/bedroom/${this.tempBedroom._id}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal('UnauthorizedError');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid header auth', function(){
+      before(done => bedroomMock.call(this, done));
+      it('should respond with status 400', done => {
+        request.delete(`${url}/api/residence/${this.tempBedroom._id}`)
+        .set({Authorization: 'lul this is bad}'})
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.text).to.equal('BadRequestError');
           done();
         });
       });
