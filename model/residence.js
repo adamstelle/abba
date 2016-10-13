@@ -1,6 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose');2
 const debug = require('debug')('abba:residence');
 
 const Estimate = require('./estimate.js');
