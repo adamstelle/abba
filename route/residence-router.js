@@ -24,7 +24,6 @@ residenceRouter.post('/api/residence', bearerAuth, jsonParser, function(req, res
 
 residenceRouter.get('/api/residence/:id', bearerAuth, function(req, res, next){
   debug('GET /api/residence/:resID');
-
   Residence.findById(req.params.id)
   .catch(() => Promise.reject(createError(404, 'Invalid resID')))
   .then(residence => {

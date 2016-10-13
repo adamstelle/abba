@@ -48,9 +48,9 @@ bedroomRouter.put('/api/residence/:resID/bedroom/:id', bearerAuth, jsonParser, f
   debug('PUT /api/residence/:resID/bedroom/:bedID');
 
   Bedroom.findById(req.params.id)
-  .then( bedroom => {
+  .then(bedroom => {
     if(bedroom.userID.toString() !== req.user._id.toString())
-      return next(createError(401, 'invalid userid'));
+      return next(createError(401, 'invalid user ID'));
     return Bedroom.findByIdAndUpdate( bedroom._id, req.body, { new:true});
   })
   .then(bedroom => res.json(bedroom))
@@ -63,18 +63,17 @@ bedroomRouter.put('/api/residence/:resID/bedroom/:id', bearerAuth, jsonParser, f
 
 bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(req, res, next) {
   debug('DELETE /api/residence/:resID/bedroom/:id');
-
   Bedroom.findById(req.params.id)
   .catch(err => {
     return err.status ? Promise.reject(err) : Promise.reject(createError(404, err.message));
   })
-  .then( bedroom => {
+  .then(bedroom => {
     if(bedroom.userID.toString() !== req.user._id.toString())
-      return Promise.reject(createError(401, 'invalid userID'));
+      return Promise.reject(createError(401, 'invalid user ID'));
     return Bedroom.removeBedroom(bedroom._id);
   })
-  .then( () => {
-    return  Residence.findByIdAndRemoveBedroom(req.params.resID, req.params.id);
+  .then(() => {
+    return Residence.findByIdAndRemoveBedroom(req.params.resID, req.params.id);
   })
   .then(() => res.status(204).send())
   .catch(next);
