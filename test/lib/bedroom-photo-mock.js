@@ -25,7 +25,6 @@ module.exports = function(done){
     .then(photo => {
       let photoArray = [];
       photoArray.push(photo);
-      console.log('photo array is', photoArray);
       Bedroom.findByIdAndAddPhotos(this.tempBedroom._id, photoArray)
       .then(() => {
         this.tempPhoto = photo;

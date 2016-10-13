@@ -20,7 +20,6 @@ profileRouter.post('/api/profile', bearerAuth, jsonParser, function(req, res, ne
   .then(profile => res.json(profile))
   .catch(err => {
     if (err.message === 'profile validation failed') return next(createError(400, err.message));
-    console.log('err is ', err);
     next(err);
   });
 });

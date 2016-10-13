@@ -1,13 +1,13 @@
 'use strict';
 
 const Router = require('express').Router;
-const Bedroom = require('../model/bedroom.js');
 const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('abba:bedroom-router');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const Residence = require('../model/residence.js');
+const Bedroom = require('../model/bedroom.js');
 
 const bedroomRouter = module.exports = Router();
 
@@ -70,8 +70,8 @@ bedroomRouter.delete('/api/residence/:resID/bedroom/:id', bearerAuth, function(r
   })
   .then( bedroom => {
     if(bedroom.userID.toString() !== req.user._id.toString())
-      return next(createError(401, 'invalid userID'));
-    return Bedroom.findByIdAndRemove(bedroom._id);
+      return Promise.reject(createError(401, 'invalid userID'));
+    return Bedroom.removeBedroom(bedroom._id);
   })
   .then( () => {
     return  Residence.findByIdAndRemoveBedroom(req.params.resID, req.params.id);
