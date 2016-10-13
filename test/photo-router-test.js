@@ -9,6 +9,7 @@ const request = require('superagent');
 const server = require('../server.js');
 const Profile = require('../model/profile.js');
 const Bedroom = require('../model/bedroom.js');
+const userMock = require('./lib/user-mock.js');
 const profileMock = require('./lib/profile-mock.js');
 const bedroomMock = require('./lib/bedroom-mock.js');
 const profilePhotoMock = require('./lib/profile-photo-mock.js');
@@ -36,7 +37,7 @@ describe('testing photo middleware', function(){
   before(done => serverControl.serverUp(server, done));
   after(done => serverControl.serverDown(server, done));
   afterEach(done => cleanUpDatabase(done));
-  
+
   describe('testing POST /api/profile/:profileID/photo', () => {
     describe('with valid body, auth and ID', () => {
       before(done => profileMock.call(this, done));
@@ -54,16 +55,88 @@ describe('testing photo middleware', function(){
           .then(profile => {
             expect(profile.photo.imageURI).to.equal(examplePhotoResult.imageURI);
             expect(profile.photo.objectKey).to.equal(examplePhotoResult.objectKey);
+            expect(res.status).to.equal(200);
+            expect(res.body.caption).to.equal(examplePhoto.caption);
           });
-          expect(res.status).to.equal(200);
-          expect(res.body.caption).to.equal(examplePhoto.caption);
-          // expect(res.body.imageURI).to.equal(examplePhotoResult.imageURI);
           done();
         })
         .catch(done);
       });
     });
+
+    describe('with invalid body, valid auth and ID', () => {
+      before(done => profileMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.post(`localhost:3000/api/profile/${this.tempProfile._id}/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('BADNESS', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid token', () => {
+      before(done => profileMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.post(`localhost:3000/api/profile/${this.tempProfile._id}/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}FAKENESS`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid header', () => {
+      before(done => profileMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.post(`localhost:3000/api/profile/${this.tempProfile._id}/photo`)
+        .set({
+          Authorization: 'Not bearer!',
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with unauthorized user', () => {
+      before(done => profileMock.call(this, done));
+      before(done => userMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.post(`localhost:3000/api/profile/${this.tempProfile._id}/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
   });
+
   describe('testing DELETE /api/profile/:profileID/photo/:id', () => {
     describe('testing with valid auth and ID', () => {
       beforeEach(done => profilePhotoMock.call(this, done));
@@ -90,7 +163,67 @@ describe('testing photo middleware', function(){
         .catch(done);
       });
     });
+    describe('with invalid profile ID', () => {
+      before(done => profilePhotoMock.call(this, done));
+      it('should return a 404 error', done => {
+        request.delete(`localhost:3000/api/profile/${this.tempProfile._id}BAD/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err.message).to.equal('Not Found');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid token', () => {
+      before(done => profilePhotoMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.delete(`localhost:3000/api/profile/${this.tempProfile._id}BAD/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}FAKENESS`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid header', () => {
+      before(done => profilePhotoMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.delete(`localhost:3000/api/profile/${this.tempProfile._id}BAD/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: 'Not bearer!',
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('testing with unauthorized user', () => {
+      before(done => profilePhotoMock.call(this, done));
+      before(done => userMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.delete(`localhost:3000/api/profile/${this.tempProfile._id}/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
   });
+
   describe('testing POST /api/bedroom/:bedroomID/photo', () => {
     describe('single photo with valid body, auth and ID', () => {
       before(done => bedroomMock.call(this, done));
@@ -119,6 +252,77 @@ describe('testing photo middleware', function(){
         .catch(done);
       });
     });
+    describe('with invalid body, valid auth and ID', () => {
+      before(done => bedroomMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.post(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('BADNESS', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid token', () => {
+      before(done => bedroomMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.post(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}FAKENESS`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid header', () => {
+      before(done => bedroomMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.post(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo`)
+        .set({
+          Authorization: 'Not bearer!',
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('with unauthorized user', () => {
+      before(done => bedroomMock.call(this, done));
+      before(done => userMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.post(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .field('name', examplePhoto.name)
+        .field('caption', examplePhoto.caption)
+        .attach('image', `${__dirname}/data/img1.jpg`)
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
   });
   describe('testing DELETE /api/bedroom/:bedroomID/photo/:id', () => {
     describe('testing with valid auth and ID', () => {
@@ -144,6 +348,65 @@ describe('testing photo middleware', function(){
           done();
         })
         .catch(done);
+      });
+    });
+    describe('with invalid profile ID', () => {
+      before(done => bedroomPhotoMock.call(this, done));
+      it('should return a 404 error', done => {
+        request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}BAD/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(err.message).to.equal('Not Found');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid token', () => {
+      before(done => bedroomPhotoMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}BAD/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}FAKENESS`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
+      });
+    });
+
+    describe('with invalid header', () => {
+      before(done => bedroomPhotoMock.call(this, done));
+      it('should return a 400 error', done => {
+        request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}BAD/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: 'Not bearer!',
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(err.message).to.equal('Bad Request');
+          done();
+        });
+      });
+    });
+    describe('testing with unauthorized user', () => {
+      before(done => bedroomPhotoMock.call(this, done));
+      before(done => userMock.call(this, done));
+      it('should return a 401 error', done => {
+        request.delete(`localhost:3000/api/bedroom/${this.tempBedroom._id}/photo/${this.tempPhoto._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`,
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(401);
+          expect(err.message).to.equal('Unauthorized');
+          done();
+        });
       });
     });
   });
