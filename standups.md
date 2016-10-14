@@ -28,7 +28,6 @@ BUGS (5)
 - Debug photo delete mongoose error
 - POST api/profile route error
 - GET api/profile route error
--
 
 Broader To-Dos
 
@@ -92,15 +91,15 @@ TODO:
 Goals for morning:
 -  by deleting a residence remove all bedrooms
 -  by deleting bedroom remove all photos and estimate
--  add populate to all model static methods 
+-  add populate to all model static methods
 -  check for if user adding or defining residence with same authorization / check if user is associate with resource
 -  refactoring all tests
 
-- afternoon : 
+- afternoon :
   - scratch Goals
   - pagination
-  - validation on user inputs 
+  - validation on user inputs
     - residence
     - bedroom
   - using google API for validation address / auto Complete
-  - 
+  -
