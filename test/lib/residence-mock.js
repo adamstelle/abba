@@ -20,7 +20,7 @@ module.exports = function(done){
     state: 'WA',
     zip: '12345',
     address: `${address}`,
-  };
+  }; 
 
   profileMock.call(this, err => {
     if (err) return done(err);
