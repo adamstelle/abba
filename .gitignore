@@ -5,6 +5,8 @@ db
 logs
 *.log
 npm-debug.log*
+coverage
+html-report
 
 # Runtime data
 pids
