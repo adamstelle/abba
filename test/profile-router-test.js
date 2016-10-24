@@ -41,6 +41,7 @@ describe('testing profile routes', function() {
           Authorization: `Bearer ${this.tempToken}`,
         })
         .end((err, res) => {
+            console.log('POST res.header', res.headers);
           if (err) return done(err);
           expect(res.status).to.equal(200);
           expect(res.body.firstName).to.equal(exampleProfileData.firstName);
