@@ -1,7 +1,9 @@
 # Logs
 
+build
 .env
 db
+data/*
 logs
 *.log
 npm-debug.log*
